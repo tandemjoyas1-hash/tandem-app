@@ -768,6 +768,9 @@ input[type="file"] { display: none; }
     <div class="taller-tab" onclick="showRetiroTab('lote')" id="tab-retiro-lote">
       👥 Todos de un cliente
     </div>
+    <div class="taller-tab" onclick="showRetiroTab('boleta')" id="tab-retiro-boleta">
+      🧾 Por N° de boleta
+    </div>
   </div>
 
   <div id="retiro-individual">
@@ -884,6 +887,20 @@ input[type="file"] { display: none; }
       <div id="lote-retiro-aviso-pago"></div>
       <button class="btn btn-oro" onclick="reiniciarLoteRetiro()">🔍 Buscar otro cliente</button>
     </div>
+  </div>
+
+  <div id="retiro-boleta" style="display:none">
+    <div class="card">
+      <div class="card-title">🧾 Buscar boleta</div>
+      <div class="search-box">
+        <input type="text" class="search-input" id="buscar-boleta-input" enterkeyhint="search" placeholder="N° de boleta... (Enter para buscar)" onkeydown="if(event.key==='Enter'){event.preventDefault(); buscarBoletaRetiro();}">
+        <button class="search-btn" onclick="buscarBoletaRetiro()">🔍</button>
+      </div>
+      <div id="buscar-boleta-loading" style="display:none; text-align:center; color:var(--gris); padding:10px; font-size:13px;">
+        ⏳ Buscando...
+      </div>
+    </div>
+    <div id="resultado-boleta-retiro"></div>
   </div>
 
 </div>
@@ -1173,8 +1190,10 @@ function showEntradaTab(tab) {
 function showRetiroTab(tab) {
   document.getElementById('retiro-individual').style.display = tab === 'individual' ? 'block' : 'none';
   document.getElementById('retiro-lote').style.display = tab === 'lote' ? 'block' : 'none';
+  document.getElementById('retiro-boleta').style.display = tab === 'boleta' ? 'block' : 'none';
   document.getElementById('tab-retiro-individual').classList.toggle('active', tab === 'individual');
   document.getElementById('tab-retiro-lote').classList.toggle('active', tab === 'lote');
+  document.getElementById('tab-retiro-boleta').classList.toggle('active', tab === 'boleta');
 }
 
 // ===== ENTRADA EN LOTE =====
@@ -1551,6 +1570,56 @@ function reiniciarLoteRetiro() {
   document.getElementById('lote-retiro-boleta').style.display = 'none';
   document.getElementById('lote-retiro-aviso-pago').innerHTML = '';
   window._boletaActualNumero = null;
+}
+
+// Busca una boleta por número y muestra sus datos con la opción de marcarla como retirada
+async function buscarBoletaRetiro() {
+  const numero = document.getElementById('buscar-boleta-input').value.trim();
+  const cont = document.getElementById('resultado-boleta-retiro');
+  if (!numero) { alert('Escribí el N° de boleta.'); return; }
+
+  document.getElementById('buscar-boleta-loading').style.display = 'block';
+  cont.innerHTML = '';
+  const r = await llamarConector('buscarBoleta', { numero: numero }, 'GET');
+  document.getElementById('buscar-boleta-loading').style.display = 'none';
+
+  if (!r || !r.encontrada) {
+    cont.innerHTML = '<div class="sobre-card"><div style="text-align:center; color:var(--gris); padding:10px;">No se encontró ninguna boleta con ese número.</div></div>';
+    return;
+  }
+
+  const yaRetirada = String(r.estado || '').toUpperCase().indexOf('RETIRADA') !== -1 || String(r.estado || '').toUpperCase() === 'PAGADA';
+  const listaSobres = (r.sobres || []).map(s => `<div style="padding:4px 0; border-bottom:1px dashed var(--gris-claro); font-size:13px;">📦 Sobre #${s}</div>`).join('');
+  const totalCambio = r.totalOriginal !== undefined && Number(r.totalOriginal) !== Number(r.total);
+
+  cont.innerHTML = `
+    <div class="sobre-card">
+      <div class="sobre-numero">🧾 Boleta #${r.numero}</div>
+      <div class="sobre-cliente">${r.cliente || '—'}</div>
+      <div style="margin:10px 0;">${listaSobres}</div>
+      <div class="saldo-display" style="margin-top:10px">
+        <span>Total de la boleta</span>
+        <span class="monto">$${Number(r.total || 0).toLocaleString('es-AR')}</span>
+      </div>
+      ${totalCambio ? `<div style="text-align:center; font-size:12px; color:var(--naranja); margin-top:4px;">⚠️ El total cambió desde que se generó (era $${Number(r.totalOriginal).toLocaleString('es-AR')}) — se ve el precio actualizado de los sobres.</div>` : ''}
+      <div style="margin-top:10px; text-align:center; font-weight:700; color:${yaRetirada ? 'var(--verde)' : 'var(--naranja)'};">
+        Estado: ${r.estado || 'PENDIENTE'}
+      </div>
+      ${yaRetirada ? '' : `
+      <button class="btn btn-verde" style="margin-top:14px; width:100%;" onclick="marcarBoletaComoRetirada('${r.numero}')">
+        📦 Marcar como retirada (queda en cuenta corriente)
+      </button>`}
+    </div>`;
+}
+
+// Marca todos los sobres de una boleta como retirados, sin cobrar (quedan en cuenta corriente)
+async function marcarBoletaComoRetirada(numeroBoleta) {
+  if (!confirm('¿Confirmás que el cliente se llevó todo lo de esta boleta? Va a quedar todo a cuenta corriente, sin cobrar nada ahora.')) return;
+  const res = await llamarConector('marcarBoletaRetirada', { numeroBoleta: numeroBoleta });
+  if (!res || !res.ok) { alert('No se pudo marcar la boleta. Probá de nuevo.'); return; }
+  alert(`✅ Boleta #${numeroBoleta} marcada como retirada — ${res.sobresMarcados} sobre(s) actualizados. Queda en cuenta corriente.`);
+  document.getElementById('buscar-boleta-input').value = '';
+  document.getElementById('resultado-boleta-retiro').innerHTML = '';
 }
 
 function irARegreso() {
