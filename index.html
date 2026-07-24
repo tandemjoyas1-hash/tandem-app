@@ -915,6 +915,9 @@ input[type="file"] { display: none; }
     <div class="taller-tab" onclick="showTallerTab('cola')" id="tab-cola">
       📋 Cola trabajos
     </div>
+    <div class="taller-tab" onclick="showTallerTab('todos')" id="tab-todos">
+      📊 Todos en el local
+    </div>
   </div>
 
   <!-- TAB: BAJAR AL TALLER -->
@@ -968,6 +971,17 @@ input[type="file"] { display: none; }
         <input type="date" class="dato-input" id="t-para-el-dia" style="width:140px; font-weight:700; color:var(--oro);">
       </div>
       
+      <div style="margin-top:12px; margin-bottom:8px">
+        <div class="dato-label" style="margin-bottom:8px">¿Quién está bajando esto?</div>
+        <div class="urgencia-btns">
+          <button class="ubtn" onclick="setQuienBaja('SOFI')" id="qb-SOFI">SOFI</button>
+          <button class="ubtn" onclick="setQuienBaja('ROMI')" id="qb-ROMI">ROMI</button>
+          <button class="ubtn" onclick="setQuienBaja('DAMI')" id="qb-DAMI">DAMI</button>
+          <button class="ubtn" onclick="setQuienBaja('CELE')" id="qb-CELE">CELE</button>
+          <button class="ubtn" onclick="setQuienBaja('LAUREANO')" id="qb-LAUREANO">LAUREANO</button>
+        </div>
+      </div>
+
       <div style="margin-top:12px; margin-bottom:8px">
         <div class="dato-label" style="margin-bottom:8px">¿A qué orfebre baja?</div>
         <div class="urgencia-btns">
@@ -1024,6 +1038,18 @@ input[type="file"] { display: none; }
     <div id="taller-cola-lista"></div>
   </div>
 
+  <!-- TAB: TODOS EN EL LOCAL -->
+  <div id="taller-todos" style="display:none">
+    <div class="alerta alerta-azul" style="margin-bottom:10px; padding:6px 10px; font-size:12px;">
+      📊 Absolutamente todo lo que sigue en el local (recién entrados sin asignar, en taller, listos para retirar — todo menos lo ya retirado)
+    </div>
+
+    <input type="text" id="buscar-todos-input" placeholder="🔍 N° de sobre o cliente..."
+      class="dato-input-big" style="margin-bottom:10px; height:44px" oninput="filtrarTodosActivos()">
+
+    <div id="taller-todos-lista"></div>
+  </div>
+
 </div>
 
 <script>
@@ -1045,6 +1071,14 @@ function setDestino(d) {
   document.getElementById('destino-GRABADO').classList.toggle('selected-grabado', d === 'GRABADO');
 }
 let orfebreSeleccionado = null;
+let quienBajaSeleccionado = null;
+
+function setQuienBaja(nombre) {
+  quienBajaSeleccionado = nombre;
+  ['SOFI','ROMI','DAMI','CELE','LAUREANO'].forEach(n => {
+    document.getElementById('qb-' + n).classList.toggle('selected-hoy', n === nombre);
+  });
+}
 let sobreEncontrado = null;
 let ventanaWhatsapp = null;
 
@@ -1851,9 +1885,64 @@ function reiniciarRetiro() {
 function showTallerTab(tab) {
   document.getElementById('taller-bajar').style.display = tab === 'bajar' ? 'block' : 'none';
   document.getElementById('taller-cola').style.display = tab === 'cola' ? 'block' : 'none';
+  document.getElementById('taller-todos').style.display = tab === 'todos' ? 'block' : 'none';
   document.getElementById('tab-bajar').classList.toggle('active', tab === 'bajar');
   document.getElementById('tab-cola').classList.toggle('active', tab === 'cola');
+  document.getElementById('tab-todos').classList.toggle('active', tab === 'todos');
   if (tab === 'cola') cargarColaTaller();
+  if (tab === 'todos') cargarTodosActivos();
+}
+
+let todosActivosCompleto = [];
+
+async function cargarTodosActivos() {
+  const cont = document.getElementById('taller-todos-lista');
+  cont.innerHTML = '<div style="text-align:center; color:var(--gris); padding:14px;">⏳ Cargando...</div>';
+  const r = await llamarConector('todosActivos', {}, 'GET');
+  todosActivosCompleto = (r && r.activos) || [];
+  renderTodosActivos(todosActivosCompleto);
+}
+
+function filtrarTodosActivos() {
+  const q = document.getElementById('buscar-todos-input').value.trim().toLowerCase();
+  let filtrada = todosActivosCompleto;
+  if (q) {
+    filtrada = filtrada.filter(item =>
+      String(item.sobre).toLowerCase().includes(q) ||
+      (item.cliente || '').toLowerCase().includes(q)
+    );
+  }
+  renderTodosActivos(filtrada);
+}
+
+function renderTodosActivos(lista) {
+  const cont = document.getElementById('taller-todos-lista');
+  if (lista.length === 0) {
+    cont.innerHTML = '<div style="text-align:center; color:var(--gris); padding:20px;">No hay ningún sobre activo en el local ahora mismo.</div>';
+    return;
+  }
+  // Los atrasados y los sin asignar primero, para que salten a la vista
+  const ordenada = [...lista].sort((a, b) => {
+    if (!!a.atrasado !== !!b.atrasado) return a.atrasado ? -1 : 1;
+    if (!!a.sinAsignar !== !!b.sinAsignar) return a.sinAsignar ? -1 : 1;
+    return 0;
+  });
+  cont.innerHTML = `<div style="font-size:12px; color:var(--gris); margin-bottom:8px;">${lista.length} sobre(s) activo(s) en el local</div>` +
+    ordenada.map(item => {
+      const etiqueta = item.sinAsignar
+        ? '<span style="color:var(--naranja); font-weight:700;">📥 SIN ASIGNAR</span>'
+        : `<span style="color:var(--azul); font-weight:700;">🛠 ${item.orfebre}</span>`;
+      return `
+      <div class="cola-item" style="border-left: 4px solid ${item.atrasado ? 'var(--rojo)' : 'var(--gris-claro)'};">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-weight:700;">#${item.sobre}${item.atrasado ? ' ⚠' : ''}</div>
+          ${etiqueta}
+        </div>
+        <div style="font-size:13px; margin-top:2px;">${item.cliente || '—'}</div>
+        <div style="font-size:12px; color:var(--gris);">${item.descripcion || ''}</div>
+        <div style="font-size:11px; color:var(--gris); margin-top:4px;">${item.estado || ''}</div>
+      </div>`;
+    }).join('');
 }
 
 let imgB64Taller = null;
@@ -2028,7 +2117,7 @@ function seleccionarOrfebreLote(nombre) {
 async function confirmarBajaLote() {
   if (!window._orfebreLote) { alert('Elegí a qué orfebre bajan.'); return; }
   const sobres = (window._sobresParaBajar || []).map(s => s.sobre);
-  const res = await llamarConector('bajarTallerLote', { sobres: sobres, orfebre: window._orfebreLote });
+  const res = await llamarConector('bajarTallerLote', { sobres: sobres, orfebre: window._orfebreLote, quienBaja: vendedora });
   if (!res) { alert('No se pudo conectar con la planilla. Probá de nuevo en unos segundos.'); return; }
   if (res.error) { alert('Error: ' + res.error); return; }
   alert(`✅ ${res.bajados} sobres bajaron a taller con ${window._orfebreLote}.` + (res.errores && res.errores.length ? `\n⚠️ No se pudieron bajar: ${res.errores.join(', ')}` : ''));
@@ -2132,10 +2221,12 @@ async function confirmarTaller() {
   const sobre = document.getElementById('t-sobre').textContent;
   const cliente = document.getElementById('t-cliente').textContent;
 
+  if (!quienBajaSeleccionado) { alert('Elegí quién está bajando el sobre'); return; }
   if (!orfebreSeleccionado) { alert('Elegí a qué orfebre baja el sobre'); return; }
 
   const res = await llamarConector('bajarTaller', {
-    sobre: sobre, orfebre: orfebreSeleccionado, paraElDia: document.getElementById('t-para-el-dia').value || ''
+    sobre: sobre, orfebre: orfebreSeleccionado, quienBaja: quienBajaSeleccionado,
+    paraElDia: document.getElementById('t-para-el-dia').value || ''
   });
   if (!res || !res.ok) { alert((res && res.error) || 'No se pudo guardar. Revisá el N° de sobre.'); return; }
 
@@ -2156,6 +2247,8 @@ function reiniciarTaller() {
   urgenciaSeleccionada = null;
   orfebreSeleccionado = null;
   setOrfebre(null);
+  quienBajaSeleccionado = null;
+  setQuienBaja(null);
   document.getElementById('t-notas').value = '';
   document.getElementById('buscar-bajar-input').value = '';
   document.getElementById('buscar-bajar-resultado').innerHTML = '';
