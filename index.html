@@ -1,0 +1,2567 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Tándem Joyería</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💍</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%231A1A1A%22/><text x=%2250%22 y=%2266%22 font-size=%2255%22 text-anchor=%22middle%22>💍</text></svg>">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tándem">
+<meta name="mobile-web-app-capable" content="yes">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --oro: #C9A84C;
+  --oro-claro: #F0DFA0;
+  --oro-oscuro: #8B6914;
+  --negro: #1A1A1A;
+  --blanco: #FAFAF8;
+  --gris: #6B6B6B;
+  --gris-claro: #F0EFED;
+  --verde: #2D6A4F;
+  --verde-claro: #D8F3DC;
+  --rojo: #C1121F;
+  --rojo-claro: #FFE5E7;
+  --azul: #1B4F72;
+  --azul-claro: #D6EAF8;
+  --naranja: #E07B39;
+  --naranja-claro: #FDEBD0;
+  --morado: #6B2D8B;
+  --morado-claro: #EDE0F5;
+  --radio: 16px;
+  --sombra: 0 4px 24px rgba(0,0,0,0.10);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--blanco);
+  color: var(--negro);
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* HEADER */
+header {
+  background: var(--negro);
+  padding: 20px 20px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid var(--oro);
+}
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-icon {
+  font-size: 24px;
+}
+.logo-text {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--oro);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.logo-sub {
+  font-size: 10px;
+  color: #999;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 1px;
+}
+.vendedora-badge {
+  background: var(--oro);
+  color: var(--negro);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+}
+
+/* SELECTOR VENDEDORA */
+.vendedora-selector {
+  display: none;
+  padding: 12px 20px;
+  background: #2a2a2a;
+  border-bottom: 1px solid #333;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.vendedora-selector.visible { display: flex; }
+.vbtn {
+  background: #333;
+  color: #ccc;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.vbtn.active { background: var(--oro); color: var(--negro); }
+
+/* NAV */
+nav {
+  background: #222;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid #333;
+}
+.nav-btn {
+  background: none;
+  border: none;
+  color: #888;
+  padding: 12px 4px 10px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+}
+.nav-btn .nav-icon { font-size: 20px; }
+.nav-btn.active { color: var(--oro); border-bottom-color: var(--oro); }
+
+/* PANELS */
+.panel { display: none; padding: 20px; }
+.panel.active { display: block; }
+
+/* CARDS */
+.card {
+  background: white;
+  border-radius: var(--radio);
+  padding: 20px;
+  box-shadow: var(--sombra);
+  margin-bottom: 16px;
+  border: 1px solid #eee;
+}
+.card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gris);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* UPLOAD */
+.upload-zone {
+  border: 2px dashed var(--oro);
+  border-radius: 12px;
+  padding: 32px 20px;
+  text-align: center;
+  cursor: pointer;
+  background: #FFFDF5;
+  transition: all 0.2s;
+  margin-bottom: 16px;
+}
+.upload-zone:hover { background: var(--oro-claro); border-style: solid; }
+.upload-zone .uz-icon { font-size: 40px; margin-bottom: 8px; }
+.upload-zone p { color: var(--gris); font-size: 14px; }
+.upload-zone strong { color: var(--oro-oscuro); }
+.preview-img {
+  width: 100%;
+  border-radius: 12px;
+  max-height: 200px;
+  object-fit: cover;
+  display: none;
+  margin-bottom: 12px;
+}
+
+/* BUTTONS */
+.btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  letter-spacing: 0.3px;
+}
+.btn-oro { background: var(--oro); color: var(--negro); }
+.btn-oro:hover { background: var(--oro-oscuro); color: white; }
+.btn-oro:disabled { background: #ddd; color: #999; cursor: not-allowed; }
+.btn-verde { background: var(--verde); color: white; }
+.btn-verde:hover { background: #1a4d38; }
+.btn-rojo { background: var(--rojo); color: white; }
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--gris-claro);
+  color: var(--gris);
+  margin-top: 8px;
+}
+.btn-outline:hover { border-color: var(--oro); color: var(--oro-oscuro); }
+.btn-sm {
+  width: auto;
+  padding: 8px 16px;
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+/* LOADING */
+.loading-overlay {
+  display: none;
+  text-align: center;
+  padding: 40px 20px;
+}
+.loading-overlay.visible { display: block; }
+.ring {
+  display: inline-block;
+  width: 48px; height: 48px;
+  border: 4px solid var(--oro-claro);
+  border-top-color: var(--oro);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-overlay p { color: var(--gris); font-size: 14px; }
+
+/* RESUMEN SOBRE */
+.resumen-sobre { display: none; }
+.dato-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--gris-claro);
+  gap: 12px;
+}
+.dato-row:last-child { border-bottom: none; }
+.dato-label { font-size: 12px; color: var(--gris); font-weight: 500; text-transform: uppercase; letter-spacing: 0.3px; min-width: 100px; }
+.dato-valor { font-size: 14px; font-weight: 700; text-align: right; flex: 1; }
+.dato-valor.numero-sobre { font-size: 22px; color: var(--oro-oscuro); }
+.dato-valor.verde { color: var(--verde); }
+.dato-valor.rojo { color: var(--rojo); }
+.dato-input {
+  background: #FFFDF0;
+  border: 1px solid var(--oro-claro);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: right;
+  width: 140px;
+  color: var(--negro);
+}
+.dato-input:focus { outline: 2px solid var(--oro); border-color: var(--oro); }
+@media print {
+  body.imprimiendo-boleta > *:not(#print-boleta-temp) { display: none !important; }
+  #print-boleta-temp { display: block !important; position: absolute; top: 0; left: 0; width: 100%; }
+}
+.dato-select {
+  background: #FFFDF0;
+  border: 1px solid var(--oro-claro);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--negro);
+  width: 170px;
+}
+
+/* ALERTA */
+.alerta {
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.alerta-rojo { background: var(--rojo-claro); color: var(--rojo); }
+.alerta-verde { background: var(--verde-claro); color: var(--verde); }
+.alerta-naranja { background: var(--naranja-claro); color: var(--naranja); }
+.alerta-azul { background: var(--azul-claro); color: var(--azul); }
+
+/* CONFIRMACION */
+.confirmacion { display: none; text-align: center; padding: 20px 0; }
+.conf-icon { font-size: 64px; margin-bottom: 12px; }
+.conf-titulo { font-size: 22px; font-weight: 800; color: var(--verde); margin-bottom: 8px; }
+.conf-sub { font-size: 14px; color: var(--gris); margin-bottom: 24px; }
+
+/* RETIRO - BUSQUEDA */
+.search-box {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.search-input {
+  flex: 1;
+  padding: 14px 16px;
+  border: 2px solid var(--gris-claro);
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--negro);
+  transition: border-color 0.2s;
+}
+.search-input:focus { outline: none; border-color: var(--oro); }
+.search-btn {
+  background: var(--oro);
+  border: none;
+  border-radius: 12px;
+  padding: 0 20px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* SOBRE CARD */
+.sobre-card {
+  background: white;
+  border-radius: var(--radio);
+  padding: 20px;
+  box-shadow: var(--sombra);
+  border-left: 4px solid var(--oro);
+  margin-bottom: 12px;
+  display: none;
+}
+.sobre-card.visible { display: block; }
+.sobre-numero { font-size: 28px; font-weight: 800; color: var(--oro-oscuro); margin-bottom: 4px; }
+.sobre-cliente { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+.sobre-trabajo { font-size: 13px; color: var(--gris); margin-bottom: 12px; line-height: 1.5; }
+.sobre-estado {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.estado-pendiente { background: var(--naranja-claro); color: var(--naranja); }
+.estado-taller { background: var(--morado-claro); color: var(--morado); }
+.estado-listo { background: var(--azul-claro); color: var(--azul); }
+.estado-pagado { background: var(--verde-claro); color: var(--verde); }
+
+.saldo-display {
+  background: var(--gris-claro);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+.saldo-label { font-size: 12px; color: var(--gris); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+.saldo-monto { font-size: 32px; font-weight: 800; color: var(--negro); }
+
+/* TALLER PANEL */
+.taller-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.taller-tab {
+  padding: 12px;
+  border: 2px solid var(--gris-claro);
+  border-radius: 10px;
+  background: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  color: var(--gris);
+}
+.taller-tab.active { border-color: var(--oro); color: var(--oro-oscuro); background: #FFFDF5; }
+
+/* COLA TALLER */
+.cola-item {
+  background: white;
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: var(--sombra);
+  margin-bottom: 8px;
+  border-left: 4px solid #ccc;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.cola-item.urgente { border-left-color: var(--rojo); }
+.cola-item.normal { border-left-color: var(--oro); }
+.cola-item.tranquilo { border-left-color: var(--verde); }
+.cola-num { font-size: 15px; font-weight: 800; color: var(--gris); min-width: 50px; }
+.cola-info { flex: 1; min-width: 140px; }
+.cola-cliente { font-size: 13px; font-weight: 700; }
+.cola-trabajo { font-size: 11px; color: var(--gris); margin-top: 1px; line-height: 1.3; }
+.cola-notas { font-size: 10px; color: var(--naranja); margin-top: 2px; font-weight: 600; }
+.cola-item .btn { padding: 8px 10px; font-size: 12px; width: auto; }
+
+.chips-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip-sobre {
+  background: white;
+  border: 2px solid var(--oro);
+  color: var(--negro);
+  border-radius: 14px;
+  padding: 6px 10px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+}
+.chip-sobre.chip-atrasado { border-color: var(--rojo); color: var(--rojo); }
+.chip-sobre.chip-selected { background: var(--oro); color: white; }
+.urgencia-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+.urg-hoy { background: var(--rojo-claro); color: var(--rojo); }
+.urg-semana { background: var(--naranja-claro); color: var(--naranja); }
+.urg-tranquilo { background: var(--verde-claro); color: var(--verde); }
+
+/* STEPS */
+.steps {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+.step-dot {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--gris-claro);
+  transition: background 0.3s;
+}
+.step-dot.done { background: var(--oro); }
+.step-dot.active { background: var(--oro-oscuro); }
+
+/* RESUMEN DIA */
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: var(--sombra);
+  text-align: center;
+  border-top: 3px solid var(--oro);
+}
+.stat-num { font-size: 24px; font-weight: 800; color: var(--negro); margin-bottom: 4px; }
+.stat-label { font-size: 11px; color: var(--gris); text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-card.verde { border-top-color: var(--verde); }
+.stat-card.rojo { border-top-color: var(--rojo); }
+.stat-card.azul { border-top-color: var(--azul); }
+
+/* URGENCIA SELECTOR */
+.urgencia-btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.ubtn {
+  flex: 1;
+  min-width: 80px;
+  padding: 10px 8px;
+  border: 2px solid var(--gris-claro);
+  border-radius: 8px;
+  background: white;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  color: var(--gris);
+}
+.ubtn.selected-hoy { border-color: var(--rojo); background: var(--rojo-claro); color: var(--rojo); }
+.ubtn.selected-semana { border-color: var(--naranja); background: var(--naranja-claro); color: var(--naranja); }
+.ubtn.selected-tranquilo { border-color: var(--verde); background: var(--verde-claro); color: var(--verde); }
+.ubtn.selected-grabado { border-color: var(--azul); background: var(--azul-claro); color: var(--azul); }
+.ubtn.selected-diseno { border-color: var(--morado); background: var(--morado-claro); color: var(--morado); }
+
+textarea.dato-input-big {
+  width: 100%;
+  min-height: 60px;
+  resize: vertical;
+  font-family: inherit;
+  background: #FFFDF0;
+  border: 1px solid var(--oro-claro);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--negro);
+}
+textarea.dato-input-big:focus { outline: 2px solid var(--oro); border-color: var(--oro); }
+
+/* WHATSAPP PREVIEW */
+.wa-preview {
+  background: #DCF8C6;
+  border-radius: 12px 12px 12px 0;
+  padding: 14px 16px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #1a1a1a;
+  border: 1px solid #c5e9b0;
+  margin-top: 8px;
+  position: relative;
+}
+.wa-preview::before {
+  content: 'Vista previa WhatsApp';
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--verde);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+input[type="file"] { display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="logo">
+      <span class="logo-icon">💍</span>
+      <div>
+        <div class="logo-text">Tándem</div>
+        <div class="logo-sub">Joyería</div>
+      </div>
+    </div>
+    <div class="vendedora-badge" onclick="toggleVendedora()" id="vbadge">SOFI ▾</div>
+  </div>
+  <div class="vendedora-selector" id="vselect">
+    <button class="vbtn active" onclick="setVendedora('SOFI')">SOFI</button>
+    <button class="vbtn" onclick="setVendedora('ROMI')">ROMI</button>
+    <button class="vbtn" onclick="setVendedora('DAMI')">DAMI</button>
+    <button class="vbtn" onclick="setVendedora('CELE')">CELE</button>
+    <button class="vbtn" onclick="setVendedora('LAUREANO')">LAUREANO</button>
+    <button class="vbtn" onclick="setVendedora('MAURICIO')">MAURICIO</button>
+  </div>
+</header>
+
+<nav>
+  <button class="nav-btn active" onclick="showPanel('entrada')" id="nav-entrada">
+    <span class="nav-icon">📥</span>ENTRADA
+  </button>
+  <button class="nav-btn" onclick="showPanel('taller')" id="nav-taller">
+    <span class="nav-icon">🔨</span>TALLER
+  </button>
+  <button class="nav-btn" onclick="irARegreso()" id="nav-regreso">
+    <span class="nav-icon">🔄</span>REGRESO
+  </button>
+  <button class="nav-btn" onclick="showPanel('retiro')" id="nav-retiro">
+    <span class="nav-icon">💰</span>RETIRO
+  </button>
+</nav>
+
+<!-- ======================== PANEL ENTRADA ======================== -->
+<div class="panel active" id="panel-entrada">
+
+  <div id="entrada-individual">
+  <div class="steps">
+    <div class="step-dot active" id="sd1"></div>
+    <div class="step-dot" id="sd2"></div>
+    <div class="step-dot" id="sd3"></div>
+  </div>
+
+  <!-- STEP 1: FOTO -->
+  <div id="entrada-foto">
+    <div class="card">
+      <div class="card-title">📷 Foto del sobre</div>
+      <div class="upload-zone" id="uz-entrada" onclick="document.getElementById('fileIn').click()">
+        <div class="uz-icon">📄</div>
+        <p><strong>Tocá para sacar foto o elegir imagen</strong></p>
+        <p style="margin-top:4px; font-size:12px;">El sobre tiene que verse bien la letra</p>
+        <p style="margin-top:4px; font-size:11px; color:var(--gris);">💻 En compu: arrastrá la imagen o pegala con Ctrl+V</p>
+      </div>
+      <input type="file" id="fileIn" accept="image/*" capture="environment">
+      <img id="previewImg" class="preview-img" alt="Vista previa">
+      <button class="btn btn-oro" id="btnLeer" disabled onclick="leerSobre()">
+        🔍 Leer sobre
+      </button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading-overlay" id="entrada-loading">
+    <div class="ring"></div>
+    <p>Leyendo el sobre...</p>
+    <p style="font-size:12px; color:#aaa; margin-top:8px;">La IA está analizando la imagen</p>
+  </div>
+
+  <!-- STEP 2: RESUMEN -->
+  <div class="resumen-sobre" id="entrada-resumen">
+    <div id="alerta-duplicado" class="alerta alerta-rojo" style="display:none">
+      ⚠️ <span id="texto-duplicado"></span>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🔍 Revisá los datos</div>
+
+      <div class="dato-label" style="margin-bottom:6px">Destino del sobre</div>
+      <div style="display:flex; gap:8px; margin-bottom:16px;">
+        <button type="button" class="ubtn selected-tranquilo" id="destino-TALLER" onclick="setDestino('TALLER')">🔨 Taller</button>
+        <button type="button" class="ubtn" id="destino-DISEÑO" onclick="setDestino('DISEÑO')">🎨 Diseño</button>
+        <button type="button" class="ubtn" id="destino-GRABADO" onclick="setDestino('GRABADO')">✏ Grabado</button>
+      </div>
+
+      <div class="dato-row">
+        <span class="dato-label">N° Sobre</span>
+        <input type="text" class="dato-input numero-sobre" id="r-sobre" style="width:100px; text-align:right;">
+      </div>
+      <div class="dato-row">
+        <span class="dato-label">Cliente</span>
+        <input type="text" class="dato-input" id="r-cliente" style="width:180px; text-align:right;">
+      </div>
+      <div class="dato-row">
+        <span class="dato-label">Teléfono</span>
+        <input type="text" class="dato-input" id="r-telefono" style="width:150px; text-align:right;">
+      </div>
+      <div class="dato-row">
+        <span class="dato-label">Trabajo</span>
+        <input type="text" class="dato-input" id="r-trabajo" style="width:180px; font-size:13px; text-align:right;">
+      </div>
+      <div class="dato-row">
+        <span class="dato-label">Para el día</span>
+        <input type="date" class="dato-input" id="r-fecha-entrega" style="width:140px">
+      </div>
+      <div class="dato-row">
+        <span class="dato-label">Total $</span>
+        <input type="number" class="dato-input" id="r-total" placeholder="0" oninput="calcSaldo()" style="width:160px; font-size:20px; padding:12px 14px;">
+      </div>
+      <div class="dato-row">
+        <span class="dato-label">Seña $</span>
+        <input type="number" class="dato-input" id="r-senia" placeholder="0" oninput="calcSaldo()" style="width:160px; font-size:20px; padding:12px 14px;">
+      </div>
+      <div class="dato-row">
+        <span class="dato-label">Saldo</span>
+        <span class="dato-valor rojo" id="r-saldo">—</span>
+      </div>
+      <div class="dato-row">
+        <span class="dato-label">Medio pago</span>
+        <select class="dato-select" id="r-pago">
+          <option>EFECTIVO</option>
+          <option>TARJETA FISER</option>
+          <option>TRANSFERENCIA SANTANDER</option>
+          <option>MERCADO PAGO FISER</option>
+          <option>MERCADO PAGO LAUREANO</option>
+          <option>UALA CARLA</option>
+          <option>CUENTA CORRIENTE</option>
+        </select>
+      </div>
+      <div class="dato-row">
+        <span class="dato-label">Tipo cliente</span>
+        <select class="dato-select" id="r-tipo">
+          <option>CONSUMIDOR FINAL</option>
+          <option>MAYORISTA</option>
+          <option>TALLER</option>
+        </select>
+      </div>
+      <div class="dato-row">
+        <span class="dato-label">Canal</span>
+        <select class="dato-select" id="r-canal">
+          <option>LOCAL</option>
+          <option>REDES</option>
+          <option>REDES-RETIRO LOCAL</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="alerta-saldo" class="alerta" style="display:none"></div>
+
+    <button class="btn btn-verde" onclick="confirmarEntrada()">
+      ✅ Confirmar entrada
+    </button>
+    <button class="btn btn-outline" onclick="reiniciarEntrada()">
+      ↩ Volver a escanear
+    </button>
+  </div>
+
+  <!-- STEP 3: CONFIRMACION -->
+  <div class="confirmacion" id="entrada-conf">
+    <div class="conf-icon">✅</div>
+    <div class="conf-titulo">¡Sobre registrado!</div>
+    <p class="conf-sub" id="conf-texto-entrada"></p>
+    <button class="btn btn-oro" onclick="reiniciarEntrada()">
+      📷 Escanear otro sobre
+    </button>
+  </div>
+  </div><!-- fin entrada-individual -->
+
+  <!-- MODO LOTE: varios sobres del mismo cliente -->
+  <div id="entrada-lote" style="display:none">
+    <div class="alerta alerta-azul" style="margin-bottom:12px; padding:8px 10px; font-size:12px;">
+      📦 Para cuando un comisionista deja varios sobres juntos. Sin foto ni monto — se completa después.
+    </div>
+
+    <div class="card">
+      <div class="card-title">📷 Foto de todos los sobres juntos</div>
+      <div class="upload-zone" onclick="document.getElementById('fileInLote').click()">
+        <div class="uz-icon">📚</div>
+        <p><strong>Poné los sobres uno al lado del otro y sacá una sola foto</strong></p>
+        <p style="margin-top:4px; font-size:12px;">La IA lee todos juntos y completa los campos solos</p>
+      </div>
+      <input type="file" id="fileInLote" accept="image/*" capture="environment">
+      <img id="previewLote" class="preview-img" alt="Vista previa">
+      <div id="lote-cargando" style="display:none; text-align:center; padding:12px; color:var(--gris);">
+        ⏳ Leyendo todos los sobres, puede tardar un poco...
+      </div>
+    </div>
+
+    <div class="dato-label" style="text-align:center; margin:10px 0; color:var(--gris)">— o completá a mano —</div>
+
+    <div class="card" id="lote-form-card">
+      <div class="dato-label" style="margin-bottom:6px">Cliente</div>
+      <input type="text" class="dato-input-big" id="lote-cliente" placeholder="Nombre del cliente / comisionista">
+
+      <div class="dato-label" style="margin:12px 0 6px">Números de sobre (uno por línea o separados por coma)</div>
+      <textarea class="dato-input-big" id="lote-sobres" rows="5" placeholder="30700&#10;30701&#10;30702..."></textarea>
+
+      <div class="dato-label" style="margin:12px 0 6px">Nota general (opcional)</div>
+      <input type="text" class="dato-input-big" id="lote-nota" placeholder="Ej: trabajos varios, definir precio">
+
+      <button class="btn btn-oro" style="margin-top:14px" onclick="confirmarLoteEntrada()">
+        ✅ Cargar todos los sobres
+      </button>
+    </div>
+
+    <div class="confirmacion" id="lote-entrada-conf" style="display:none">
+      <div class="conf-icon">✅</div>
+      <div class="conf-titulo" id="lote-entrada-titulo"></div>
+      <button class="btn btn-oro" onclick="reiniciarLoteEntrada()">📦 Cargar otro lote</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ======================== PANEL RETIRO ======================== -->
+<div class="panel" id="panel-retiro">
+
+  <div class="taller-tabs">
+    <div class="taller-tab active" onclick="showRetiroTab('individual')" id="tab-retiro-individual">
+      🔍 Un sobre
+    </div>
+    <div class="taller-tab" onclick="showRetiroTab('lote')" id="tab-retiro-lote">
+      👥 Todos de un cliente
+    </div>
+  </div>
+
+  <div id="retiro-individual">
+  <div class="card">
+    <div class="card-title">🔍 Buscar sobre</div>
+    <div class="search-box">
+      <input type="text" class="search-input" id="buscar-input" enterkeyhint="search" placeholder="N° sobre o nombre cliente... (Enter para buscar)" onkeydown="if(event.key==='Enter'){event.preventDefault(); buscarSobre();}">
+      <button class="search-btn" onclick="buscarSobre()">🔍</button>
+    </div>
+    <div style="font-size:12px; color:var(--gris); text-align:center;">
+      Escribí el número de sobre o el nombre del cliente
+    </div>
+    <div id="buscar-sobre-loading" style="display:none; text-align:center; color:var(--gris); padding:10px; font-size:13px;">
+      ⏳ Buscando...
+    </div>
+  </div>
+
+  <!-- Resultado búsqueda -->
+  <div class="sobre-card" id="resultado-sobre">
+    <div class="sobre-numero" id="ret-numero">—</div>
+    <div class="sobre-cliente" id="ret-cliente">—</div>
+    <div class="sobre-trabajo" id="ret-trabajo">—</div>
+    <div>
+      <span class="sobre-estado" id="ret-estado">—</span>
+    </div>
+    
+    <div id="ret-info-retirado" style="display:none; margin-top:16px; padding:14px; border-radius:10px; background:var(--verde-claro); color:var(--verde); font-size:14px; font-weight:600; text-align:center;"></div>
+
+    <div id="ret-cobro-section">
+      <div class="saldo-display" style="margin-top:16px">
+        <div class="saldo-label">Saldo a cobrar</div>
+        <div class="saldo-monto" id="ret-saldo">$0</div>
+      </div>
+
+      <div class="dato-row">
+        <span class="dato-label">Medio pago</span>
+        <select class="dato-select" id="ret-pago">
+          <option>EFECTIVO</option>
+          <option>TARJETA FISER</option>
+          <option>TRANSFERENCIA SANTANDER</option>
+          <option>MERCADO PAGO FISER</option>
+          <option>MERCADO PAGO LAUREANO</option>
+          <option>UALA CARLA</option>
+          <option>CUENTA CORRIENTE</option>
+        </select>
+      </div>
+
+      <div style="margin-top:16px">
+        <button class="btn btn-verde" onclick="confirmarRetiro()">
+          💰 Confirmar cobro y entregar al cliente
+        </button>
+      </div>
+    </div>
+
+    <button class="btn btn-outline" style="margin-top:8px" onclick="generarBoletaUnSobre()">
+      🧾 Generar boleta de este sobre
+    </button>
+    <button class="btn btn-outline" style="margin-top:8px" onclick="verHistorialSobre()">
+      📜 Ver historial de este sobre
+    </button>
+    <div id="boleta-un-sobre" style="display:none; margin-top:12px;"></div>
+    <div id="historial-sobre" style="display:none; margin-top:12px;"></div>
+  </div>
+
+  <div class="confirmacion" id="retiro-conf">
+    <div class="conf-icon">✅</div>
+    <div class="conf-titulo">¡Cobro registrado!</div>
+    <p class="conf-sub" id="conf-texto-retiro"></p>
+    <div class="wa-preview" id="wa-preview-retiro"></div>
+    <button class="btn btn-oro" style="margin-top:16px" onclick="reiniciarRetiro()">
+      🔍 Buscar otro sobre
+    </button>
+  </div>
+  </div><!-- fin retiro-individual -->
+
+  <!-- MODO LOTE: todos los sobres pendientes de un cliente -->
+  <div id="retiro-lote" style="display:none">
+    <div class="card">
+      <div class="card-title">👥 Buscar cliente</div>
+      <div class="search-box">
+        <input type="text" class="search-input" id="lote-retiro-nombre" enterkeyhint="search" placeholder="Nombre, varios N° de sobre (123,124) o N° de boleta — Enter para buscar" onkeydown="if(event.key==='Enter'){event.preventDefault(); buscarSobresCliente();}">
+        <button class="search-btn" onclick="buscarSobresCliente()">🔍</button>
+      </div>
+    </div>
+
+    <div id="lote-retiro-lista"></div>
+
+    <div id="lote-retiro-resumen" style="display:none">
+      <div class="dato-row">
+        <span class="dato-label">Medio pago</span>
+        <select class="dato-select" id="lote-retiro-pago">
+          <option>EFECTIVO</option>
+          <option>TARJETA FISER</option>
+          <option>TRANSFERENCIA SANTANDER</option>
+          <option>MERCADO PAGO FISER</option>
+          <option>MERCADO PAGO LAUREANO</option>
+          <option>UALA CARLA</option>
+          <option>CUENTA CORRIENTE</option>
+        </select>
+      </div>
+      <button class="btn btn-verde" style="margin-top:12px" onclick="confirmarRetiroLote()">
+        💰 Cobrar y entregar los seleccionados
+      </button>
+      <button class="btn btn-outline" style="margin-top:8px" onclick="generarBoletaLote()">
+        🧾 Generar boleta (imprimir / WhatsApp)
+      </button>
+    </div>
+
+    <div id="lote-retiro-boleta" style="display:none; margin-top:14px;"></div>
+
+    <div class="confirmacion" id="lote-retiro-conf" style="display:none">
+      <div class="conf-icon">✅</div>
+      <div class="conf-titulo" id="lote-retiro-titulo"></div>
+      <div id="lote-retiro-aviso-pago"></div>
+      <button class="btn btn-oro" onclick="reiniciarLoteRetiro()">🔍 Buscar otro cliente</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ======================== PANEL TALLER ======================== -->
+<div class="panel" id="panel-taller">
+  
+  <div class="taller-tabs">
+    <div class="taller-tab active" onclick="showTallerTab('bajar')" id="tab-bajar">
+      ⬇️ Bajar al taller
+    </div>
+    <div class="taller-tab" onclick="showTallerTab('cola')" id="tab-cola">
+      📋 Cola trabajos
+    </div>
+  </div>
+
+  <!-- TAB: BAJAR AL TALLER -->
+  <div id="taller-bajar">
+    <div class="card">
+      <div class="card-title">🔍 Buscar sobre ya cargado</div>
+      <div class="search-box">
+        <input type="text" class="search-input" id="buscar-bajar-input" enterkeyhint="search" placeholder="N° de sobre, varios (123,124) o nombre del cliente — Enter para buscar" onkeydown="if(event.key==='Enter'){event.preventDefault(); buscarSobreParaBajar();}">
+        <button class="search-btn" onclick="buscarSobreParaBajar()">🔍</button>
+      </div>
+      <div id="buscar-bajar-resultado"></div>
+    </div>
+
+    <div class="dato-label" style="text-align:center; margin:10px 0; color:var(--gris)">— o —</div>
+
+    <div class="card">
+      <div class="card-title">📷 Foto del sobre</div>
+      <div class="upload-zone" id="uz-taller" onclick="document.getElementById('fileInTaller').click()">
+        <div class="uz-icon">📦</div>
+        <p><strong>Fotografiá el sobre antes de bajar</strong></p>
+        <p style="margin-top:4px; font-size:12px;">Se registra la salida al taller</p>
+        <p style="margin-top:4px; font-size:11px; color:var(--gris);">💻 En compu: arrastrá la imagen o pegala con Ctrl+V</p>
+      </div>
+      <input type="file" id="fileInTaller" accept="image/*" capture="environment">
+      <img id="previewTaller" class="preview-img" alt="Vista previa">
+      <button class="btn btn-oro" id="btnLeerTaller" disabled onclick="leerSobreTaller()">
+        🔍 Leer sobre
+      </button>
+      <div id="taller-cargando" style="display:none; text-align:center; padding:16px; color:var(--gris);">
+        ⏳ Leyendo el sobre, puede tardar unos segundos con conexión lenta...
+      </div>
+    </div>
+
+    <div class="card" id="taller-datos" style="display:none">
+      <div class="card-title">📝 Datos del trabajo</div>
+      
+      <div class="dato-row">
+        <span class="dato-label">N° Sobre</span>
+        <span class="dato-valor numero-sobre" id="t-sobre">—</span>
+      </div>
+      <div class="dato-row">
+        <span class="dato-label">Cliente</span>
+        <span class="dato-valor" id="t-cliente">—</span>
+      </div>
+      <div class="dato-row">
+        <span class="dato-label">Trabajo</span>
+        <span class="dato-valor" id="t-trabajo" style="font-size:13px">—</span>
+      </div>
+      <div class="dato-row">
+        <span class="dato-label">🗓️ Cliente retira el</span>
+        <input type="date" class="dato-input" id="t-para-el-dia" style="width:140px; font-weight:700; color:var(--oro);">
+      </div>
+      
+      <div style="margin-top:12px; margin-bottom:8px">
+        <div class="dato-label" style="margin-bottom:8px">¿A qué orfebre baja?</div>
+        <div class="urgencia-btns">
+          <button class="ubtn" onclick="setOrfebre('DANIEL')" id="orf-daniel">DANIEL</button>
+          <button class="ubtn" onclick="setOrfebre('PACHULA')" id="orf-pachula">PACHULA</button>
+          <button class="ubtn" onclick="setOrfebre('GRABADO')" id="orf-grabado">✏ GRABADO</button>
+          <button class="ubtn" onclick="setOrfebre('DISEÑO')" id="orf-diseno">🎨 DISEÑO</button>
+          <button class="ubtn" onclick="setOrfebre('LAUREANO')" id="orf-laureano">🧪 LAUREANO</button>
+        </div>
+      </div>
+
+      <div class="alerta alerta-azul" style="margin-top:12px">
+        📅 La fecha de retiro ya quedó guardada desde la entrada
+      </div>
+
+      <div style="margin-top:12px">
+        <div class="dato-label" style="margin-bottom:8px">Notas para el taller</div>
+        <textarea class="dato-input-big" id="t-notas" placeholder="Ej: falta piedra azul, consultar con Mauricio antes de continuar..."></textarea>
+      </div>
+
+      <button class="btn btn-oro" style="margin-top:16px" onclick="confirmarTaller()">
+        🔨 Confirmar bajada al taller
+      </button>
+    </div>
+
+    <div class="confirmacion" id="taller-conf">
+      <div class="conf-icon">🔨</div>
+      <div class="conf-titulo" style="color:var(--morado)">¡Bajó al taller!</div>
+      <p class="conf-sub" id="conf-texto-taller"></p>
+      <button class="btn btn-oro" onclick="reiniciarTaller()">
+        📷 Registrar otro sobre
+      </button>
+    </div>
+  </div>
+
+  <!-- TAB: COLA TRABAJOS -->
+  <div id="taller-cola" style="display:none">
+    <div class="alerta alerta-azul" style="margin-bottom:10px; padding:6px 10px; font-size:12px;">
+      📋 Trabajos en el taller
+    </div>
+
+    <input type="text" id="buscar-cola-input" placeholder="🔍 N° de sobre, varios (3045,3046) o cliente..."
+      class="dato-input-big" style="margin-bottom:10px; height:44px" oninput="filtrarCola()">
+
+    <div class="urgencia-btns" style="margin-bottom:12px">
+      <button class="ubtn selected-hoy" onclick="filtrarPorOrfebre('TODOS')" id="filtro-orf-TODOS">TODOS</button>
+      <button class="ubtn" onclick="filtrarPorOrfebre('DANIEL')" id="filtro-orf-DANIEL">DANIEL</button>
+      <button class="ubtn" onclick="filtrarPorOrfebre('PACHULA')" id="filtro-orf-PACHULA">PACHULA</button>
+      <button class="ubtn" onclick="filtrarPorOrfebre('GRABADO')" id="filtro-orf-GRABADO">✏ GRABADO</button>
+      <button class="ubtn" onclick="filtrarPorOrfebre('DISEÑO')" id="filtro-orf-DISEÑO">🎨 DISEÑO</button>
+      <button class="ubtn" onclick="filtrarPorOrfebre('LAUREANO')" id="filtro-orf-LAUREANO">🧪 LAUREANO</button>
+    </div>
+
+    <div id="taller-cola-lista"></div>
+  </div>
+
+</div>
+
+<script>
+// ===== CONFIGURACIÓN =====
+// Pegá acá la URL que te da Google al "Implementar" el Apps Script (Code.gs)
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyIlyDUNQj8REj_pLCx6vB7Tp7pVtTBL0HO327gG4weJ0qwsZCP7y4wMjxpBf6DGjSi0Q/exec';
+
+// ===== STATE =====
+let vendedora = 'SOFI';
+let imgBase64 = null;
+let datosLeidos = null;
+let urgenciaSeleccionada = null;
+let destinoSeleccionado = 'TALLER';
+
+function setDestino(d) {
+  destinoSeleccionado = d;
+  document.getElementById('destino-TALLER').classList.toggle('selected-tranquilo', d === 'TALLER');
+  document.getElementById('destino-DISEÑO').classList.toggle('selected-diseno', d === 'DISEÑO');
+  document.getElementById('destino-GRABADO').classList.toggle('selected-grabado', d === 'GRABADO');
+}
+let orfebreSeleccionado = null;
+let sobreEncontrado = null;
+let ventanaWhatsapp = null;
+
+// Abre (o reutiliza) una sola pestaña de WhatsApp, sin importar cuántas veces se llame
+function abrirWhatsapp(link) {
+  try {
+    if (ventanaWhatsapp && !ventanaWhatsapp.closed) {
+      ventanaWhatsapp.location = link;
+      try { ventanaWhatsapp.focus(); } catch (e) {}
+      return;
+    }
+  } catch (e) {
+    // La pestaña anterior quedó bloqueada (WhatsApp corta el acceso por seguridad) — abrimos una nueva
+  }
+  ventanaWhatsapp = window.open(link, 'tandem_whatsapp');
+}
+
+// Arma el link de WhatsApp para un teléfono argentino (acepta con o sin código de país)
+function armarLinkWhatsapp(telefono, mensaje) {
+  let limpio = String(telefono || '').replace(/\D/g, '');
+  if (!limpio) return null;
+  if (limpio.startsWith('0')) limpio = limpio.substring(1);
+  if (!limpio.startsWith('54')) limpio = '54' + limpio;
+  if (!limpio.startsWith('549')) limpio = '549' + limpio.substring(2);
+  const esMovil = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  return esMovil
+    ? `https://wa.me/${limpio}?text=${encodeURIComponent(mensaje)}`
+    : `https://web.whatsapp.com/send?phone=${limpio}&text=${encodeURIComponent(mensaje)}`;
+}
+
+async function llamarConector(accion, datos, metodo, intento) {
+  metodo = metodo || 'POST';
+  intento = intento || 1;
+  try {
+    let res;
+    if (metodo === 'GET') {
+      const params = new URLSearchParams(datos).toString();
+      res = await fetch(APPS_SCRIPT_URL + '?accion=' + accion + '&' + params);
+    } else {
+      res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(Object.assign({ accion: accion }, datos))
+      });
+    }
+    const texto = await res.text();
+    try {
+      return JSON.parse(texto);
+    } catch (parseErr) {
+      // Google devolvió una página en vez de datos (suele pasar si se llama muy rápido seguido)
+      if (intento < 3) {
+        await new Promise(r => setTimeout(r, 800));
+        return llamarConector(accion, datos, metodo, intento + 1);
+      }
+      alert('Google tardó en responder. Esperá unos segundos y probá de nuevo.');
+      return null;
+    }
+  } catch (err) {
+    if (intento < 3) {
+      await new Promise(r => setTimeout(r, 800));
+      return llamarConector(accion, datos, metodo, intento + 1);
+    }
+    alert('No se pudo conectar con la planilla. Revisá tu conexión a internet.\n' + err.message);
+    return null;
+  }
+}
+
+// ===== ARRASTRAR Y PEGAR IMAGEN (para usar desde la compu) =====
+function habilitarArrastrarYPegar(zonaId, inputId) {
+  const zona = document.getElementById(zonaId);
+  const input = document.getElementById(inputId);
+  if (!zona || !input) return;
+
+  zona.addEventListener('dragover', e => {
+    e.preventDefault();
+    zona.style.borderColor = 'var(--oro)';
+    zona.style.background = 'var(--oro-claro)';
+  });
+  zona.addEventListener('dragleave', () => {
+    zona.style.borderColor = '';
+    zona.style.background = '';
+  });
+  zona.addEventListener('drop', e => {
+    e.preventDefault();
+    zona.style.borderColor = '';
+    zona.style.background = '';
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const dt = new DataTransfer();
+      dt.items.add(e.dataTransfer.files[0]);
+      input.files = dt.files;
+      input.dispatchEvent(new Event('change'));
+    }
+  });
+
+  document.addEventListener('paste', e => {
+    // Solo actua si esta pantalla esta visible
+    if (zona.offsetParent === null) return;
+    const items = e.clipboardData.items;
+    for (const item of items) {
+      if (item.type.indexOf('image') !== -1) {
+        const file = item.getAsFile();
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        input.files = dt.files;
+        input.dispatchEvent(new Event('change'));
+        break;
+      }
+    }
+  });
+}
+
+habilitarArrastrarYPegar('uz-entrada', 'fileIn');
+habilitarArrastrarYPegar('uz-taller', 'fileInTaller');
+
+// ===== VENDEDORA =====
+function toggleVendedora() {
+  document.getElementById('vselect').classList.toggle('visible');
+}
+function setVendedora(v) {
+  vendedora = v;
+  document.getElementById('vbadge').textContent = v + ' ▾';
+  document.querySelectorAll('.vbtn').forEach(b => b.classList.toggle('active', b.textContent === v));
+  document.getElementById('vselect').classList.remove('visible');
+}
+
+// ===== NAV =====
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+  if (name === 'taller') {
+    document.querySelector('#panel-taller .taller-tabs').style.display = 'grid';
+  }
+}
+
+function showEntradaTab(tab) {
+  document.getElementById('entrada-individual').style.display = tab === 'individual' ? 'block' : 'none';
+  document.getElementById('entrada-lote').style.display = tab === 'lote' ? 'block' : 'none';
+  document.getElementById('tab-entrada-individual').classList.toggle('active', tab === 'individual');
+  document.getElementById('tab-entrada-lote').classList.toggle('active', tab === 'lote');
+}
+
+function showRetiroTab(tab) {
+  document.getElementById('retiro-individual').style.display = tab === 'individual' ? 'block' : 'none';
+  document.getElementById('retiro-lote').style.display = tab === 'lote' ? 'block' : 'none';
+  document.getElementById('tab-retiro-individual').classList.toggle('active', tab === 'individual');
+  document.getElementById('tab-retiro-lote').classList.toggle('active', tab === 'lote');
+}
+
+// ===== ENTRADA EN LOTE =====
+document.getElementById('fileInLote').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async ev => {
+    document.getElementById('previewLote').src = ev.target.result;
+    document.getElementById('previewLote').style.display = 'block';
+    document.getElementById('lote-cargando').style.display = 'block';
+
+    const imgB64 = ev.target.result.split(',')[1];
+    const datos = await llamarConector('leerLoteIA', { imagen: imgB64 });
+
+    document.getElementById('lote-cargando').style.display = 'none';
+
+    if (!datos || datos.error || !datos.sobres || datos.sobres.length === 0) {
+      alert('No se pudieron leer los sobres. Probá con otra foto, con mejor luz, o cargalos a mano abajo.');
+      return;
+    }
+
+    document.getElementById('lote-cliente').value = datos.cliente || '';
+    document.getElementById('lote-sobres').value = datos.sobres.map(s => s.numero_sobre).join('\n');
+    document.getElementById('lote-nota').value = datos.sobres.map(s => s.trabajo).filter(t => t).join(' / ');
+    alert(`Se leyeron ${datos.sobres.length} sobres. Revisá los datos abajo antes de confirmar.`);
+  };
+  reader.readAsDataURL(file);
+});
+
+async function confirmarLoteEntrada() {
+  const cliente = document.getElementById('lote-cliente').value.trim();
+  const sobresTexto = document.getElementById('lote-sobres').value.trim();
+  const nota = document.getElementById('lote-nota').value.trim();
+  if (!cliente) { alert('Falta el nombre del cliente'); return; }
+  if (!sobresTexto) { alert('Falta cargar los números de sobre'); return; }
+
+  const res = await llamarConector('nuevaEntradaLote', {
+    cliente: cliente, sobres: sobresTexto, trabajo: nota, vendedora: vendedora
+  });
+  if (!res || !res.ok) { alert('No se pudo guardar.'); return; }
+
+  document.getElementById('lote-form-card').style.display = 'none';
+  document.getElementById('lote-entrada-conf').style.display = 'block';
+  document.getElementById('lote-entrada-titulo').textContent = `${res.cargados} sobres cargados para ${cliente}`;
+}
+
+function reiniciarLoteEntrada() {
+  document.getElementById('lote-cliente').value = '';
+  document.getElementById('lote-sobres').value = '';
+  document.getElementById('lote-nota').value = '';
+  document.getElementById('fileInLote').value = '';
+  document.getElementById('previewLote').style.display = 'none';
+  document.getElementById('lote-form-card').style.display = 'block';
+  document.getElementById('lote-entrada-conf').style.display = 'none';
+}
+
+// ===== RETIRO EN LOTE =====
+let debounceLoteCliente = null;
+let idBusquedaCliente = 0;
+function buscarSobresCliente() {
+  const q = document.getElementById('lote-retiro-nombre').value.trim();
+  if (!q) { document.getElementById('lote-retiro-lista').innerHTML = ''; document.getElementById('lote-retiro-resumen').style.display = 'none'; return; }
+  buscarSobresClienteReal(q);
+}
+
+async function buscarSobresClienteReal(q) {
+  const miId = ++idBusquedaCliente;
+  const cont = document.getElementById('lote-retiro-lista');
+  cont.innerHTML = '<div style="text-align:center; color:var(--gris); padding:16px;">⏳ Buscando sobres, puede demorar unos segundos...</div>';
+  document.getElementById('lote-retiro-resumen').style.display = 'none';
+  document.getElementById('lote-retiro-boleta').style.display = 'none';
+  const tokens = q.split(/[,\s]+/).map(s => s.trim()).filter(s => s);
+  let sonSobres = tokens.length >= 2 && tokens.every(t => /^\d+$/.test(t));
+  let numerosABuscar = tokens;
+
+  const esBoleta = tokens.length === 1 && /^b?-?\d+$/i.test(tokens[0]);
+  if (!esBoleta) window._boletaActualNumero = null;
+  if (esBoleta) {
+    const numBoleta = tokens[0].replace(/^b-?/i, '');
+    const boletaRes = await llamarConector('buscarBoleta', { numero: numBoleta }, 'GET');
+    if (miId !== idBusquedaCliente) return;
+    if (!boletaRes || !boletaRes.encontrada) {
+      cont.innerHTML = `<div style="text-align:center; color:var(--gris); padding:16px;">No se encontró la boleta N° ${numBoleta}.</div>`;
+      document.getElementById('lote-retiro-resumen').style.display = 'none';
+      return;
+    }
+    numerosABuscar = boletaRes.sobres;
+    window._boletaActualNumero = boletaRes.numero;
+    sonSobres = true;
+  }
+
+  let sobres;
+  let corregidoA = null;
+  if (sonSobres) {
+    sobres = [];
+    for (const n of numerosABuscar) {
+      let datos = await llamarConector('buscarSobre', { numero: n }, 'GET');
+      if (!datos || !datos.encontrado) {
+        await new Promise(r => setTimeout(r, 500));
+        datos = await llamarConector('buscarSobre', { numero: n }, 'GET');
+      }
+      if (datos && datos.encontrado && String(datos.estado).indexOf('RETIRADO') === -1) {
+        sobres.push(datos);
+      }
+      await new Promise(r => setTimeout(r, 300));
+    }
+  } else {
+    const res = await llamarConector('buscarPorCliente', { nombre: q }, 'GET');
+    sobres = (res && res.sobres) || [];
+    corregidoA = (res && res.corregidoA) || null;
+  }
+
+  // Si mientras esperábamos la respuesta el usuario ya lanzó otra búsqueda más nueva, esta se descarta
+  if (miId !== idBusquedaCliente) return;
+
+  if (sobres.length === 0) {
+    cont.innerHTML = `<div style="text-align:center; color:var(--gris); padding:16px;">${sonSobres ? 'No se encontró ninguno de esos sobres.' : 'No hay sobres pendientes para ese nombre.'}</div>`;
+    document.getElementById('lote-retiro-resumen').style.display = 'none';
+    return;
+  }
+  window._sobresCliente = sobres;
+  const avisoCorreccion = corregidoA ? `<div style="text-align:center; color:var(--oro-oscuro); font-size:12px; margin-bottom:8px;">Se encontraron resultados para "${corregidoA}"</div>` : '';
+  cont.innerHTML = avisoCorreccion + sobres.map((s, i) => `
+    <label class="cola-item normal" style="cursor:pointer">
+      <input type="checkbox" class="chk-lote-retiro" data-i="${i}" checked style="width:20px;height:20px;margin-right:4px" onchange="actualizarResumenLote()">
+      <div class="cola-num">#${s.sobre}</div>
+      <div class="cola-info">
+        <div class="cola-cliente">${s.cliente || s.descripcion || ''}</div>
+        <div class="cola-trabajo">${s.estado || ''}</div>
+      </div>
+      <div style="font-weight:800; color:var(--oro)">$${(s.saldoPendiente||0).toLocaleString('es-AR')}</div>
+    </label>
+  `).join('');
+  document.getElementById('lote-retiro-resumen').style.display = 'block';
+}
+
+function actualizarResumenLote() {
+  // solo re-habilita el boton; el calculo de seleccionados se hace al confirmar
+}
+
+// Arma el HTML de la boleta (recibo para imprimir + mensaje de WhatsApp), sea de un sobre o de varios juntos.
+// entradas: lista de { sobre, descripcion, monto, items } — items es opcional (sobres con varios trabajos, ej: CPU)
+function construirBoleta(cliente, numeroBoleta, entradas, total, telefono) {
+  const filas = entradas.map(e => {
+    if (e.items && e.items.length > 0) {
+      return e.items.map(it => `<tr><td style="padding:6px 8px; border-bottom:1px solid #eee;">#${e.sobre}</td><td style="padding:6px 8px; border-bottom:1px solid #eee;">${it.descripcion || ''}</td><td style="padding:6px 8px; border-bottom:1px solid #eee; text-align:right;">$${(Number(it.precio)||0).toLocaleString('es-AR')}</td></tr>`).join('');
+    }
+    return `<tr><td style="padding:6px 8px; border-bottom:1px solid #eee;">#${e.sobre}</td><td style="padding:6px 8px; border-bottom:1px solid #eee;">${e.descripcion || ''}</td><td style="padding:6px 8px; border-bottom:1px solid #eee; text-align:right;">$${(Number(e.monto)||0).toLocaleString('es-AR')}</td></tr>`;
+  }).join('');
+
+  const reciboHtml = `
+    <div style="border:1px solid #ddd; border-radius:10px; padding:16px; background:white;">
+      <div style="text-align:center; font-weight:800; font-size:16px; margin-bottom:4px;">JOYERÍA TÁNDEM</div>
+      <div style="text-align:center; font-size:12px; color:#777; margin-bottom:4px;">Vélez Sarsfield 156, Córdoba</div>
+      <div style="text-align:center; font-size:12px; color:#777; margin-bottom:12px;">Boleta N° ${numeroBoleta}</div>
+      <div style="font-weight:700; margin-bottom:8px;">Cliente: ${cliente}</div>
+      <table style="width:100%; border-collapse:collapse; font-size:13px;">
+        <thead><tr>
+          <th style="text-align:left; padding:6px 8px; border-bottom:2px solid #333;">Sobre</th>
+          <th style="text-align:left; padding:6px 8px; border-bottom:2px solid #333;">Descripción</th>
+          <th style="text-align:right; padding:6px 8px; border-bottom:2px solid #333;">Precio</th>
+        </tr></thead>
+        <tbody>${filas}</tbody>
+      </table>
+      <div style="text-align:right; font-weight:800; font-size:16px; margin-top:10px;">TOTAL: $${total.toLocaleString('es-AR')}</div>
+      <div style="text-align:center; font-size:11px; color:#999; margin-top:10px;">${new Date().toLocaleDateString('es-AR')}</div>
+    </div>`;
+
+  // Mensaje de WhatsApp: saludo con el nombre, invitación a retirar, cada sobre con sus ítems bien separados
+  const esUnSobre = entradas.length === 1;
+  const bloques = entradas.map(e => {
+    const tieneVarios = entradas.length > 1;
+    const encabezado = tieneVarios ? `📦 *Sobre #${e.sobre}*` : `Tu trabajo, sobre *#${e.sobre}*:`;
+    if (e.items && e.items.length > 0) {
+      const lineas = e.items.map(it => `   🔹 ${it.descripcion || ''} — $${(Number(it.precio)||0).toLocaleString('es-AR')}`).join('\n');
+      return `${encabezado}\n${lineas}`;
+    }
+    return `${encabezado}\n   🔹 ${e.descripcion || ''} — $${(Number(e.monto)||0).toLocaleString('es-AR')}`;
+  }).join('\n\n');
+
+  const saludo = esUnSobre
+    ? `Hola ${cliente}! 👋 Ya podés pasar a retirar tu trabajo de Joyería Tándem:`
+    : `Hola ${cliente}! 👋 Ya podés pasar a retirar tus trabajos de Joyería Tándem:`;
+
+  const mensajeWa = `${saludo}\n\n${bloques}\n\n💰 *Total: $${total.toLocaleString('es-AR')}*\n\nTe esperamos en Vélez Sarsfield 156, Córdoba 💍`;
+  const linkWa = armarLinkWhatsapp(telefono, mensajeWa);
+
+  const htmlBoleta = reciboHtml + `
+    <div style="display:flex; gap:8px; margin-top:10px;">
+      <button class="btn btn-oro" style="flex:1" onclick="imprimirBoleta()">🖨️ Imprimir</button>
+      ${linkWa
+        ? `<a href="${linkWa}" target="_blank" rel="noopener" class="btn btn-verde" style="flex:1; text-decoration:none; text-align:center; box-sizing:border-box;">📲 WhatsApp</a>`
+        : `<div style="flex:1; text-align:center; color:#999; font-size:12px; padding-top:10px;">Sin teléfono cargado</div>`}
+    </div>`;
+
+  window._boletaTexto = mensajeWa;
+  window._boletaHtml = reciboHtml;
+  return htmlBoleta;
+}
+
+async function generarBoletaLote() {
+  try {
+    const chks = document.querySelectorAll('.chk-lote-retiro:checked');
+    if (chks.length === 0) { alert('Elegí al menos un sobre.'); return; }
+    const seleccionados = Array.from(chks).map(c => window._sobresCliente[parseInt(c.dataset.i)]);
+
+    // Busca el detalle de ítems (si lo hay) para cada sobre seleccionado, ej: sobres de CPU con varios trabajos
+    const itemsPorSobre = {};
+    await Promise.all(seleccionados.map(async s => {
+      const r = await llamarConector('itemsSobre', { numero: s.sobre }, 'GET');
+      if (r && r.items && r.items.length > 0) itemsPorSobre[s.sobre] = r.items;
+    }));
+
+    const total = seleccionados.reduce((acc, s) => acc + (Number(s.saldoPendiente) || Number(s.precioTotal) || 0), 0);
+    const cliente = String(seleccionados[0].cliente || '');
+
+    const numRes = await llamarConector('generarBoleta', {
+      cliente: cliente,
+      sobres: seleccionados.map(s => s.sobre),
+      total: total,
+      telefono: seleccionados[0].telefono || ''
+    });
+    const numeroBoleta = (numRes && numRes.numero) || '—';
+
+    const entradas = seleccionados.map(s => ({
+      sobre: s.sobre, descripcion: s.descripcion,
+      monto: Number(s.saldoPendiente) || Number(s.precioTotal) || 0,
+      items: itemsPorSobre[s.sobre]
+    }));
+    const htmlBoleta = construirBoleta(cliente, numeroBoleta, entradas, total, seleccionados[0].telefono);
+
+    const cont = document.getElementById('lote-retiro-boleta');
+    if (!cont) { alert('No encontré dónde mostrar la boleta (avisale a Mauricio).'); return; }
+    cont.style.display = 'block';
+    cont.innerHTML = htmlBoleta;
+    cont.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } catch (err) {
+    alert('Error al generar la boleta: ' + err.message);
+  }
+}
+
+// Boleta de UN SOLO sobre (ej: cliente que trae un sobre al local con varios trabajos/ítems adentro)
+async function generarBoletaUnSobre() {
+  try {
+    if (!sobreEncontrado) return;
+    const s = sobreEncontrado;
+    const r = await llamarConector('itemsSobre', { numero: s.sobre }, 'GET');
+    const items = (r && r.items && r.items.length > 0) ? r.items : null;
+    const monto = Number(s.saldoPendiente) || Number(s.precioTotal) || 0;
+    const total = items ? items.reduce((acc, it) => acc + (Number(it.precio) || 0), 0) : monto;
+    const cliente = String(s.cliente || '');
+
+    const numRes = await llamarConector('generarBoleta', {
+      cliente: cliente, sobres: [s.sobre], total: total, telefono: s.telefono || ''
+    });
+    const numeroBoleta = (numRes && numRes.numero) || '—';
+
+    const entradas = [{ sobre: s.sobre, descripcion: s.descripcion, monto: monto, items: items }];
+    const htmlBoleta = construirBoleta(cliente, numeroBoleta, entradas, total, s.telefono);
+
+    const cont = document.getElementById('boleta-un-sobre');
+    if (!cont) { alert('No encontré dónde mostrar la boleta (avisale a Mauricio).'); return; }
+    cont.style.display = 'block';
+    cont.innerHTML = htmlBoleta;
+    cont.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } catch (err) {
+    alert('Error al generar la boleta: ' + err.message);
+  }
+}
+
+// Muestra la línea de tiempo completa de un sobre: cada paso con su fecha y hora
+async function verHistorialSobre() {
+  const cont = document.getElementById('historial-sobre');
+  if (!sobreEncontrado || !cont) return;
+  cont.style.display = 'block';
+  cont.innerHTML = '<div style="text-align:center; color:var(--gris); padding:10px;">⏳ Buscando historial...</div>';
+
+  const r = await llamarConector('historialSobre', { numero: sobreEncontrado.sobre }, 'GET');
+  const eventos = (r && r.eventos) || [];
+
+  if (eventos.length === 0) {
+    cont.innerHTML = '<div style="text-align:center; color:var(--gris); padding:10px; font-size:13px;">Este sobre todavía no tiene historial registrado (puede ser de antes de que se agregara esta función).</div>';
+    return;
+  }
+
+  const iconos = {
+    'ENTRADA': '📥', 'BAJA A TALLER': '🔨', 'REASIGNADO': '↗️',
+    'RETORNO': '🔁', 'LISTO PARA RETIRAR': '🟢', 'RETIRADO': '✅'
+  };
+
+  const filas = eventos.map(ev => {
+    const f = new Date(ev.fecha);
+    const fechaTxt = f.toLocaleDateString('es-AR') + ' ' + f.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+    const icono = iconos[ev.evento] || '•';
+    return `
+      <div style="display:flex; gap:10px; padding:8px 0; border-bottom:1px dashed var(--gris-claro);">
+        <div style="font-size:16px;">${icono}</div>
+        <div style="flex:1;">
+          <div style="font-size:13px; font-weight:700;">${ev.evento}</div>
+          <div style="font-size:12px; color:var(--gris);">${ev.detalle || ''}</div>
+          <div style="font-size:11px; color:var(--gris); margin-top:2px;">${fechaTxt}</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  cont.innerHTML = `
+    <div style="border:1px solid var(--gris-claro); border-radius:10px; padding:12px;">
+      <div style="font-weight:700; font-size:13px; margin-bottom:8px;">📜 Historial del sobre #${sobreEncontrado.sobre}</div>
+      ${filas}
+    </div>`;
+}
+
+function imprimirBoleta() {
+  try {
+    let temp = document.getElementById('print-boleta-temp');
+    if (!temp) {
+      temp = document.createElement('div');
+      temp.id = 'print-boleta-temp';
+      document.body.appendChild(temp);
+    }
+    temp.innerHTML = window._boletaHtml;
+    document.body.classList.add('imprimiendo-boleta');
+    window.print();
+    setTimeout(() => document.body.classList.remove('imprimiendo-boleta'), 500);
+  } catch (err) {
+    alert('Error al imprimir: ' + err.message);
+  }
+}
+
+function enviarBoletaWhatsapp(cliente, telefono, total, cantidad) {
+  try {
+    const mensaje = `Hola! Te dejamos el resumen de tu pedido en Joyería Tándem:\n\n${window._boletaTexto}\n\nTOTAL: $${Number(total).toLocaleString('es-AR')}\n\nPodés pasar cuando quieras por nuestro local. Vélez Sarsfield 156, Córdoba 💍`;
+    const link = armarLinkWhatsapp(telefono, mensaje);
+    if (!link) { alert('Este cliente no tiene teléfono cargado.'); return; }
+    const ventana = window.open(link, '_blank');
+    if (!ventana) { alert('El navegador bloqueó la ventana de WhatsApp. Permitile abrir ventanas emergentes a este sitio (mirá el aviso que suele aparecer arriba del navegador, o en Configuración del sitio).'); return; }
+  } catch (err) {
+    alert('Error al enviar por WhatsApp: ' + err.message);
+  }
+}
+
+async function confirmarRetiroLote() {
+  const chks = document.querySelectorAll('.chk-lote-retiro:checked');
+  if (chks.length === 0) { alert('Elegí al menos un sobre.'); return; }
+  const seleccionados = Array.from(chks).map(c => window._sobresCliente[parseInt(c.dataset.i)]);
+  const pago = document.getElementById('lote-retiro-pago').value;
+
+  const res = await llamarConector('confirmarRetiroLote', {
+    sobres: seleccionados, medioPago: pago, vendedora: vendedora
+  });
+  if (!res || !res.ok) { alert('No se pudo guardar.'); return; }
+
+  document.getElementById('lote-retiro-lista').style.display = 'none';
+  document.getElementById('lote-retiro-resumen').style.display = 'none';
+  document.getElementById('lote-retiro-conf').style.display = 'block';
+  document.getElementById('lote-retiro-titulo').textContent = `${res.cerrados} sobres cobrados y entregados`;
+
+  const cliente = String(seleccionados[0].cliente || '');
+  const total = seleccionados.reduce((acc, s) => acc + (Number(s.saldoPendiente) || Number(s.precioTotal) || 0), 0);
+  const refBoleta = window._boletaActualNumero ? ` (Boleta N° ${window._boletaActualNumero})` : '';
+  const mensajePago = `Hola ${cliente}! Te confirmamos que recibimos tu pago de $${total.toLocaleString('es-AR')}${refBoleta} en Joyería Tándem y tus pedidos ya fueron retirados. ¡Gracias por tu confianza! 💍`;
+  const linkPago = armarLinkWhatsapp(seleccionados[0].telefono, mensajePago);
+  document.getElementById('lote-retiro-aviso-pago').innerHTML = linkPago
+    ? `<a href="${linkPago}" target="_blank" rel="noopener" class="btn btn-verde" style="display:block; margin:12px 0; text-decoration:none; text-align:center;">📲 Avisar que se pagó</a>`
+    : '';
+}
+
+function reiniciarLoteRetiro() {
+  document.getElementById('lote-retiro-nombre').value = '';
+  document.getElementById('lote-retiro-lista').innerHTML = '';
+  document.getElementById('lote-retiro-lista').style.display = 'block';
+  document.getElementById('lote-retiro-conf').style.display = 'none';
+  document.getElementById('lote-retiro-boleta').style.display = 'none';
+  document.getElementById('lote-retiro-aviso-pago').innerHTML = '';
+  window._boletaActualNumero = null;
+}
+
+function irARegreso() {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-taller').classList.add('active');
+  document.getElementById('nav-regreso').classList.add('active');
+  document.querySelector('#panel-taller .taller-tabs').style.display = 'none';
+  showTallerTab('cola');
+}
+
+// ===== STEPS =====
+function setStep(n) {
+  [1,2,3].forEach(i => {
+    const d = document.getElementById('sd'+i);
+    d.className = 'step-dot' + (i < n ? ' done' : i === n ? ' active' : '');
+  });
+}
+
+// ===== UPLOAD ENTRADA =====
+document.getElementById('fileIn').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    imgBase64 = ev.target.result.split(',')[1];
+    const img = document.getElementById('previewImg');
+    img.src = ev.target.result;
+    img.style.display = 'block';
+    document.getElementById('btnLeer').disabled = false;
+    document.querySelector('.upload-zone').innerHTML = '<div class="uz-icon">✅</div><p><strong>Imagen cargada</strong></p><p style="font-size:12px">Tocá "Leer sobre"</p>';
+  };
+  reader.readAsDataURL(file);
+});
+
+// ===== LEER SOBRE (IA) =====
+async function leerSobre() {
+  document.getElementById('entrada-foto').style.display = 'none';
+  document.getElementById('entrada-loading').classList.add('visible');
+  setStep(2);
+
+  try {
+    const datos = await llamarConector('leerSobreIA', { imagen: imgBase64 });
+    if (!datos || datos.error) throw new Error(datos ? datos.error : 'sin respuesta');
+    datosLeidos = datos;
+    mostrarResumenEntrada(datos);
+  } catch(err) {
+    document.getElementById('entrada-loading').classList.remove('visible');
+    document.getElementById('entrada-foto').style.display = 'block';
+    setStep(1);
+    alert('Error al leer: ' + err.message);
+  }
+}
+
+async function mostrarResumenEntrada(d) {
+  document.getElementById('entrada-loading').classList.remove('visible');
+  document.getElementById('entrada-resumen').style.display = 'block';
+
+  document.getElementById('r-sobre').value = d.numero_sobre || '';
+  document.getElementById('r-cliente').value = d.cliente || '';
+  document.getElementById('r-telefono').value = d.telefono || '';
+  document.getElementById('r-trabajo').value = d.trabajo || '';
+  document.getElementById('r-fecha-entrega').value = fechaParaInput(d.para_el_dia);
+  document.getElementById('r-total').value = d.total || '';
+  document.getElementById('r-senia').value = d.senia || '';
+  calcSaldo();
+  document.getElementById('alerta-duplicado').style.display = 'none';
+
+  // Check duplicado contra la planilla real
+  if (d.numero_sobre) {
+    const existente = await llamarConector('buscarSobre', { numero: d.numero_sobre }, 'GET');
+    if (existente && existente.encontrado) {
+      document.getElementById('alerta-duplicado').style.display = 'flex';
+      document.getElementById('texto-duplicado').textContent = `El sobre N° ${d.numero_sobre} ya está registrado. ¿Es un pago de saldo? Andá a la pestaña Retiro.`;
+    }
+  }
+}
+
+function calcSaldo() {
+  const total = parseFloat(document.getElementById('r-total').value) || 0;
+  const senia = parseFloat(document.getElementById('r-senia').value) || 0;
+  const saldo = total - senia;
+  document.getElementById('r-saldo').textContent = '$' + saldo.toLocaleString('es-AR');
+  
+  const alerta = document.getElementById('alerta-saldo');
+  if (total > 0) {
+    alerta.style.display = 'flex';
+    if (saldo <= 0) {
+      alerta.className = 'alerta alerta-verde';
+      alerta.textContent = '✅ Pagó el total completo — quedará como PAGADO';
+    } else {
+      alerta.className = 'alerta alerta-naranja';
+      alerta.textContent = `⏳ Queda saldo pendiente de $${saldo.toLocaleString('es-AR')}`;
+    }
+  }
+}
+
+async function confirmarEntrada() {
+  const sobre = document.getElementById('r-sobre').value;
+  const cliente = document.getElementById('r-cliente').value;
+  const total = document.getElementById('r-total').value;
+  const senia = document.getElementById('r-senia').value;
+  const pago = document.getElementById('r-pago').value;
+
+  if (!document.getElementById('r-fecha-entrega').value) {
+    if (!confirm('No pusiste la fecha "Para el día". ¿Seguro que el sobre no tiene fecha de entrega? (Aceptar = confirmar sin fecha, Cancelar = volver a completarla)')) return;
+  }
+
+  const btn = event.target;
+  btn.disabled = true; btn.textContent = 'Guardando...';
+
+  const res = await llamarConector('nuevaEntrada', {
+    sobre: sobre, cliente: cliente, total: parseFloat(total)||0,
+    sena: parseFloat(senia)||0, medioPago: pago, vendedora: vendedora,
+    trabajo: document.getElementById('r-trabajo').value || '',
+    paraElDia: document.getElementById('r-fecha-entrega').value || '',
+    telefono: document.getElementById('r-telefono').value || '',
+    destino: destinoSeleccionado
+  });
+
+  btn.disabled = false; btn.textContent = '✅ Confirmar entrada';
+
+  if (!res || !res.ok) { alert('No se pudo guardar. Probá de nuevo.'); return; }
+
+  document.getElementById('entrada-resumen').style.display = 'none';
+  document.getElementById('entrada-conf').style.display = 'block';
+  document.getElementById('conf-texto-entrada').innerHTML = 
+    `Sobre <strong>N° ${sobre}</strong> — <strong>${cliente}</strong><br>Seña de $${parseInt(senia||0).toLocaleString('es-AR')} registrada en la caja`;
+  setStep(3);
+}
+
+function reiniciarEntrada() {
+  imgBase64 = null; datosLeidos = null;
+  setDestino('TALLER');
+  document.getElementById('fileIn').value = '';
+  document.getElementById('previewImg').style.display = 'none';
+  document.getElementById('btnLeer').disabled = true;
+  document.getElementById('entrada-foto').style.display = 'block';
+  document.getElementById('entrada-loading').classList.remove('visible');
+  document.getElementById('entrada-resumen').style.display = 'none';
+  document.getElementById('entrada-conf').style.display = 'none';
+  document.getElementById('alerta-duplicado').style.display = 'none';
+  document.getElementById('alerta-saldo').style.display = 'none';
+  document.querySelector('.upload-zone').innerHTML = '<div class="uz-icon">📄</div><p><strong>Tocá para sacar foto o elegir imagen</strong></p><p style="margin-top:4px; font-size:12px;">El sobre tiene que verse bien la letra</p>';
+  setStep(1);
+}
+
+// ===== RETIRO =====
+let debounceBuscar = null;
+function buscarSobre() {
+  const q = document.getElementById('buscar-input').value.trim();
+  if (!q) { document.getElementById('resultado-sobre').classList.remove('visible'); document.getElementById('buscar-sobre-loading').style.display = 'none'; return; }
+  document.getElementById('resultado-sobre').classList.remove('visible');
+  document.getElementById('buscar-sobre-loading').style.display = 'block';
+  buscarSobreReal(q);
+}
+
+async function buscarSobreReal(q) {
+  const datos = await llamarConector('buscarSobre', { numero: q }, 'GET');
+  document.getElementById('buscar-sobre-loading').style.display = 'none';
+  if (!datos || !datos.encontrado) {
+    document.getElementById('resultado-sobre').classList.remove('visible');
+    return;
+  }
+  sobreEncontrado = datos;
+  document.getElementById('ret-numero').textContent = '#' + datos.sobre;
+  document.getElementById('ret-cliente').textContent = datos.cliente || '—';
+  document.getElementById('ret-trabajo').textContent = datos.descripcion || '—';
+  document.getElementById('ret-saldo').textContent = '$' + (datos.saldoPendiente||0).toLocaleString('es-AR');
+
+  const estadoEl = document.getElementById('ret-estado');
+  const infoRetirado = document.getElementById('ret-info-retirado');
+  const cobroSection = document.getElementById('ret-cobro-section');
+  const yaRetirado = String(datos.estado || '').toUpperCase().indexOf('RETIRADO') !== -1;
+
+  if (yaRetirado) {
+    const fechaTxt = datos.fechaRetiro ? new Date(datos.fechaRetiro).toLocaleDateString('es-AR') : 'fecha no registrada';
+    estadoEl.textContent = `RETIRADO el ${fechaTxt}`;
+    const saldo = Number(datos.saldoPendiente) || 0;
+    const realizadoTxt = datos.realizadoPor ? ` — Hecho por ${datos.realizadoPor}` : '';
+    infoRetirado.textContent = saldo > 0
+      ? `✅ Retirado el ${fechaTxt} — Quedó debiendo $${saldo.toLocaleString('es-AR')} en cuenta corriente${realizadoTxt}`
+      : `✅ Retirado el ${fechaTxt} — Pagado en su totalidad${realizadoTxt}`;
+    infoRetirado.style.display = 'block';
+    cobroSection.style.display = 'none';
+  } else {
+    estadoEl.textContent = datos.estado || '—';
+    infoRetirado.style.display = 'none';
+    cobroSection.style.display = 'block';
+  }
+  document.getElementById('resultado-sobre').classList.add('visible');
+  document.getElementById('retiro-conf').style.display = 'none';
+  document.getElementById('boleta-un-sobre').style.display = 'none';
+  document.getElementById('historial-sobre').style.display = 'none';
+}
+
+async function confirmarRetiro() {
+  if (!sobreEncontrado) return;
+  const pago = document.getElementById('ret-pago').value;
+  const saldo = sobreEncontrado.saldoPendiente || 0;
+  const esCuentaCorriente = pago === 'CUENTA CORRIENTE';
+
+  const res = await llamarConector('confirmarRetiro', {
+    sobre: sobreEncontrado.sobre, montoCobrado: saldo, medioPago: pago, vendedora: vendedora
+  });
+  if (!res || !res.ok) { alert('No se pudo guardar. Probá de nuevo.'); return; }
+
+  document.getElementById('resultado-sobre').classList.remove('visible');
+  document.getElementById('retiro-conf').style.display = 'block';
+  document.getElementById('conf-texto-retiro').innerHTML = esCuentaCorriente
+    ? `Sobre <strong>#${sobreEncontrado.sobre}</strong> — <strong>${sobreEncontrado.cliente}</strong><br>Entregado — queda pendiente en cuenta corriente ($${saldo.toLocaleString('es-AR')})`
+    : `Sobre <strong>#${sobreEncontrado.sobre}</strong> — <strong>${sobreEncontrado.cliente}</strong><br>Saldo cobrado y cerrado`;
+  document.getElementById('wa-preview-retiro').innerHTML = esCuentaCorriente
+    ? `Hola! Te avisamos que tu pedido N° ${sobreEncontrado.sobre} en <strong>Joyería Tándem</strong> fue retirado. Queda un saldo de $${saldo.toLocaleString('es-AR')} en tu cuenta corriente. 💍<br><br><em>Vélez Sarsfield 156, Córdoba</em>`
+    : `Hola! Te avisamos que tu pedido N° ${sobreEncontrado.sobre} en <strong>Joyería Tándem</strong> fue retirado y pagado correctamente. ¡Gracias por tu confianza! 💍<br><br><em>Vélez Sarsfield 156, Córdoba</em>`;
+}
+
+function reiniciarRetiro() {
+  document.getElementById('buscar-input').value = '';
+  document.getElementById('resultado-sobre').classList.remove('visible');
+  document.getElementById('retiro-conf').style.display = 'none';
+  document.getElementById('boleta-un-sobre').style.display = 'none';
+  document.getElementById('historial-sobre').style.display = 'none';
+  document.getElementById('ret-info-retirado').style.display = 'none';
+  document.getElementById('ret-cobro-section').style.display = 'block';
+}
+
+// ===== TALLER =====
+function showTallerTab(tab) {
+  document.getElementById('taller-bajar').style.display = tab === 'bajar' ? 'block' : 'none';
+  document.getElementById('taller-cola').style.display = tab === 'cola' ? 'block' : 'none';
+  document.getElementById('tab-bajar').classList.toggle('active', tab === 'bajar');
+  document.getElementById('tab-cola').classList.toggle('active', tab === 'cola');
+  if (tab === 'cola') cargarColaTaller();
+}
+
+let imgB64Taller = null;
+
+// ===== BUSCAR SOBRE PARA BAJAR AL TALLER =====
+let debounceBuscarBajar = null;
+function buscarSobreParaBajar() {
+  const q = document.getElementById('buscar-bajar-input').value.trim();
+  const cont = document.getElementById('buscar-bajar-resultado');
+  if (!q) { cont.innerHTML = ''; return; }
+  cont.innerHTML = '<div style="text-align:center; color:var(--gris); padding:10px;">⏳ Buscando, puede demorar unos segundos...</div>';
+  buscarSobreParaBajarReal(q);
+}
+
+async function buscarSobreParaBajarReal(qOriginal) {
+  const cont = document.getElementById('buscar-bajar-resultado');
+  const numeros = qOriginal.split(/[,\-\s]+/).map(s => s.trim()).filter(s => s);
+  const sonNumeros = numeros.length > 0 && numeros.every(t => /^\d+$/.test(t));
+
+  if (!sonNumeros) return buscarPorNombreParaBajar(qOriginal);
+  if (numeros.length > 1) return buscarVariosParaBajar(numeros);
+
+  cont.innerHTML = '<div style="text-align:center; color:var(--gris); padding:10px;">Buscando...</div>';
+  const datos = await llamarConector('buscarSobre', { numero: numeros[0] }, 'GET');
+
+  if (!datos || !datos.encontrado) {
+    cont.innerHTML = '<div style="text-align:center; color:var(--gris); padding:10px;">No se encontró ese sobre.</div>';
+    return;
+  }
+  if (String(datos.estado).indexOf('EN TALLER') !== -1) {
+    cont.innerHTML = '<div class="alerta alerta-azul" style="margin-top:10px">⚠️ Este sobre ya está en el taller.</div>';
+    return;
+  }
+  if (String(datos.estado).indexOf('RETIRADO') !== -1) {
+    cont.innerHTML = '<div class="alerta alerta-azul" style="margin-top:10px">⚠️ Este sobre ya fue retirado por el cliente.</div>';
+    return;
+  }
+
+  cont.innerHTML = `
+    <div class="cola-item normal" style="margin-top:10px; cursor:pointer" onclick="seleccionarSobreParaBajar('${datos.sobre}','${(datos.cliente||'').replace(/['"]/g,"")}','${(datos.descripcion||'').replace(/['"]/g,"")}')">
+      <div class="cola-num">#${datos.sobre}</div>
+      <div class="cola-info">
+        <div class="cola-cliente">${datos.cliente || 'Sin nombre'}</div>
+        <div class="cola-trabajo">${datos.descripcion || ''}</div>
+      </div>
+      <button class="btn btn-oro" style="width:auto">Elegir</button>
+    </div>`;
+}
+
+// Busca por nombre de cliente (ignora acentos/mayúsculas y corrige nombres parecidos)
+async function buscarPorNombreParaBajar(nombre) {
+  const cont = document.getElementById('buscar-bajar-resultado');
+  cont.innerHTML = '<div style="text-align:center; color:var(--gris); padding:10px;">Buscando...</div>';
+  const res = await llamarConector('buscarPorCliente', { nombre: nombre }, 'GET');
+  const sobres = (res && res.sobres || []).filter(s => String(s.estado).indexOf('EN TALLER') === -1 && String(s.estado).indexOf('RETIRADO') === -1);
+
+  if (sobres.length === 0) {
+    cont.innerHTML = '<div style="text-align:center; color:var(--gris); padding:10px;">No hay sobres pendientes para ese nombre.</div>';
+    return;
+  }
+
+  window._sobresClienteBajar = sobres;
+  window._seleccionClienteBajar = {};
+  window._avisoCorreccionBajar = (res && res.corregidoA) ? `Se encontraron resultados para "${res.corregidoA}"` : '';
+  renderResultadoNombreBajar();
+}
+
+function renderResultadoNombreBajar() {
+  const cont = document.getElementById('buscar-bajar-resultado');
+  const sobres = window._sobresClienteBajar || [];
+  const sel = window._seleccionClienteBajar || {};
+  const aviso = window._avisoCorreccionBajar ? `<div style="text-align:center; color:var(--oro-oscuro); font-size:12px; margin-bottom:6px;">${window._avisoCorreccionBajar}</div>` : '';
+
+  const filas = sobres.map(s => `
+    <label class="cola-item normal" style="cursor:pointer">
+      <input type="checkbox" data-sobre="${s.sobre}" ${sel[s.sobre] ? 'checked' : ''} onchange="toggleSeleccionClienteBajar('${s.sobre}')" style="width:20px;height:20px;margin-right:4px">
+      <div class="cola-num">#${s.sobre}</div>
+      <div class="cola-info">
+        <div class="cola-cliente">${s.cliente || 'Sin nombre'}</div>
+        <div class="cola-trabajo">${s.descripcion || ''}</div>
+      </div>
+    </label>
+  `).join('');
+
+  const seleccionados = sobres.filter(s => sel[s.sobre]);
+  const barraAccion = seleccionados.length > 0 ? `
+    <div class="dato-label" style="margin:12px 0 6px">¿A qué orfebre baja${seleccionados.length > 1 ? 'n' : ''}?</div>
+    <div class="urgencia-btns">
+      <button class="ubtn" onclick="seleccionarOrfebreLote('DANIEL')" id="lote-orf-DANIEL">DANIEL</button>
+      <button class="ubtn" onclick="seleccionarOrfebreLote('PACHULA')" id="lote-orf-PACHULA">PACHULA</button>
+      <button class="ubtn" onclick="seleccionarOrfebreLote('GRABADO')" id="lote-orf-GRABADO">✏ GRABADO</button>
+      <button class="ubtn" onclick="seleccionarOrfebreLote('DISEÑO')" id="lote-orf-DISEÑO">🎨 DISEÑO</button>
+      <button class="ubtn" onclick="seleccionarOrfebreLote('LAUREANO')" id="lote-orf-LAUREANO">🧪 LAUREANO</button>
+    </div>
+    <button class="btn btn-oro" style="margin-top:12px" onclick="confirmarBajaClienteSeleccionados()">🔨 Bajar ${seleccionados.length} sobre${seleccionados.length > 1 ? 's' : ''}</button>
+  ` : '<div style="font-size:11px; color:var(--gris); margin:8px 0;">Tocá uno o varios sobres para bajarlos</div>';
+
+  cont.innerHTML = aviso + filas + barraAccion;
+}
+
+function toggleSeleccionClienteBajar(sobre) {
+  window._seleccionClienteBajar[sobre] = !window._seleccionClienteBajar[sobre];
+  renderResultadoNombreBajar();
+}
+
+async function confirmarBajaClienteSeleccionados() {
+  if (!window._orfebreLote) { alert('Elegí a qué orfebre bajan.'); return; }
+  const sobres = (window._sobresClienteBajar || []).filter(s => window._seleccionClienteBajar[s.sobre]).map(s => s.sobre);
+  if (sobres.length === 0) { alert('Elegí al menos un sobre.'); return; }
+  const res = await llamarConector('bajarTallerLote', { sobres: sobres, orfebre: window._orfebreLote });
+  if (!res) { alert('No se pudo conectar con la planilla. Probá de nuevo en unos segundos.'); return; }
+  if (res.error) { alert('Error: ' + res.error); return; }
+  alert(`✅ ${res.bajados} sobres bajaron a taller con ${window._orfebreLote}.` + (res.errores && res.errores.length ? `\n⚠️ No se pudieron bajar: ${res.errores.join(', ')}` : ''));
+  document.getElementById('buscar-bajar-input').value = '';
+  document.getElementById('buscar-bajar-resultado').innerHTML = '';
+  window._sobresClienteBajar = null;
+  window._seleccionClienteBajar = {};
+  window._orfebreLote = null;
+  cargarColaTaller();
+}
+
+// Varios sobres juntos: buscar cada uno, mostrar lista, elegir 1 orfebre para todos
+async function buscarVariosParaBajar(numeros) {
+  const cont = document.getElementById('buscar-bajar-resultado');
+  cont.innerHTML = '<div style="text-align:center; color:var(--gris); padding:10px;">Buscando ' + numeros.length + ' sobres...</div>';
+
+  const encontrados = [];
+  for (const n of numeros) {
+    let datos = await llamarConector('buscarSobre', { numero: n }, 'GET');
+    if (!datos || !datos.encontrado) {
+      // reintento extra por si Google se saturó con la búsqueda anterior
+      await new Promise(r => setTimeout(r, 600));
+      datos = await llamarConector('buscarSobre', { numero: n }, 'GET');
+    }
+    if (datos && datos.encontrado && String(datos.estado).indexOf('EN TALLER') === -1 && String(datos.estado).indexOf('RETIRADO') === -1) {
+      encontrados.push(datos);
+    }
+    await new Promise(r => setTimeout(r, 400));
+  }
+
+  if (encontrados.length === 0) {
+    cont.innerHTML = '<div style="text-align:center; color:var(--gris); padding:10px;">No se encontró ninguno disponible para bajar.</div>';
+    return;
+  }
+
+  window._sobresParaBajar = encontrados;
+  cont.innerHTML = `
+    <div class="alerta alerta-azul" style="margin:10px 0; padding:8px 10px; font-size:12px;">
+      ✅ ${encontrados.length} sobres encontrados de ${numeros.length} buscados
+    </div>
+    ${encontrados.map(s => `<div class="cola-item normal"><div class="cola-num">#${s.sobre}</div><div class="cola-info"><div class="cola-cliente">${s.cliente || 'Sin nombre'}</div></div></div>`).join('')}
+
+    <div class="dato-label" style="margin:12px 0 6px">¿A qué orfebre bajan todos?</div>
+    <div class="urgencia-btns">
+      <button class="ubtn" onclick="seleccionarOrfebreLote('DANIEL')" id="lote-orf-DANIEL">DANIEL</button>
+      <button class="ubtn" onclick="seleccionarOrfebreLote('PACHULA')" id="lote-orf-PACHULA">PACHULA</button>
+      <button class="ubtn" onclick="seleccionarOrfebreLote('GRABADO')" id="lote-orf-GRABADO">✏ GRABADO</button>
+      <button class="ubtn" onclick="seleccionarOrfebreLote('DISEÑO')" id="lote-orf-DISEÑO">🎨 DISEÑO</button>
+      <button class="ubtn" onclick="seleccionarOrfebreLote('LAUREANO')" id="lote-orf-LAUREANO">🧪 LAUREANO</button>
+    </div>
+    <button class="btn btn-oro" style="margin-top:12px" onclick="confirmarBajaLote()">🔨 Bajar los ${encontrados.length} sobres</button>
+  `;
+}
+
+function seleccionarOrfebreLote(nombre) {
+  window._orfebreLote = nombre;
+  ['DANIEL','PACHULA','GRABADO','LAUREANO','DISEÑO'].forEach(n => {
+    document.getElementById('lote-orf-' + n).classList.toggle('selected-hoy', n === nombre);
+  });
+}
+
+async function confirmarBajaLote() {
+  if (!window._orfebreLote) { alert('Elegí a qué orfebre bajan.'); return; }
+  const sobres = (window._sobresParaBajar || []).map(s => s.sobre);
+  const res = await llamarConector('bajarTallerLote', { sobres: sobres, orfebre: window._orfebreLote });
+  if (!res) { alert('No se pudo conectar con la planilla. Probá de nuevo en unos segundos.'); return; }
+  if (res.error) { alert('Error: ' + res.error); return; }
+  alert(`✅ ${res.bajados} sobres bajaron a taller con ${window._orfebreLote}.` + (res.errores && res.errores.length ? `\n⚠️ No se pudieron bajar: ${res.errores.join(', ')}` : ''));
+  document.getElementById('buscar-bajar-input').value = '';
+  document.getElementById('buscar-bajar-resultado').innerHTML = '';
+  window._sobresParaBajar = null;
+  window._orfebreLote = null;
+  cargarColaTaller();
+}
+
+function fechaParaInput(valor) {
+  if (!valor) return '';
+  const f = new Date(valor);
+  if (isNaN(f.getTime())) return '';
+  const yyyy = f.getUTCFullYear();
+  const mm = String(f.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(f.getUTCDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+function seleccionarSobreParaBajar(sobre, cliente, trabajo) {
+  document.getElementById('taller-datos').style.display = 'block';
+  document.getElementById('t-sobre').textContent = sobre;
+  document.getElementById('t-cliente').textContent = cliente || '—';
+  document.getElementById('t-trabajo').textContent = trabajo || '—';
+  document.getElementById('t-para-el-dia').value = '';
+  llamarConector('buscarSobre', { numero: sobre }, 'GET').then(real => {
+    document.getElementById('t-para-el-dia').value = fechaParaInput(real && real.encontrado ? real.paraElDia : null);
+  });
+  document.getElementById('buscar-bajar-resultado').innerHTML = '';
+  document.getElementById('buscar-bajar-input').value = '';
+}
+
+document.getElementById('fileInTaller').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = document.getElementById('previewTaller');
+    img.src = ev.target.result;
+    img.style.display = 'block';
+    imgB64Taller = ev.target.result.split(',')[1];
+    document.getElementById('btnLeerTaller').disabled = false;
+    document.getElementById('taller-datos').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+});
+
+async function leerSobreTaller() {
+  if (!imgB64Taller) return;
+  document.getElementById('btnLeerTaller').disabled = true;
+  document.getElementById('taller-cargando').style.display = 'block';
+
+  const datos = await llamarConector('leerSobreIA', { imagen: imgB64Taller });
+
+  document.getElementById('taller-cargando').style.display = 'none';
+  document.getElementById('btnLeerTaller').disabled = false;
+
+  if (!datos || datos.error || !datos.numero_sobre) {
+    alert('No se pudo leer el sobre. Probá con otra foto, con mejor luz.');
+    return;
+  }
+
+  document.getElementById('taller-datos').style.display = 'block';
+  document.getElementById('t-sobre').textContent = datos.numero_sobre;
+  document.getElementById('t-cliente').textContent = datos.cliente || '—';
+  document.getElementById('t-trabajo').textContent = datos.trabajo || '—';
+  document.getElementById('t-para-el-dia').value = '';
+
+  const real = await llamarConector('buscarSobre', { numero: datos.numero_sobre }, 'GET');
+  document.getElementById('t-para-el-dia').value = fechaParaInput(real && real.encontrado ? real.paraElDia : null);
+}
+
+function formatearFecha(valor) {
+  if (!valor) return 'No especificada';
+  const f = new Date(valor);
+  if (isNaN(f.getTime())) return 'No especificada';
+  const dd = String(f.getUTCDate()).padStart(2, '0');
+  const mm = String(f.getUTCMonth() + 1).padStart(2, '0');
+  const yyyy = f.getUTCFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+}
+
+function setUrgencia(u) {
+  urgenciaSeleccionada = u;
+  document.getElementById('urg-hoy').className = 'ubtn' + (u === 'hoy' ? ' selected-hoy' : '');
+  document.getElementById('urg-semana').className = 'ubtn' + (u === 'semana' ? ' selected-semana' : '');
+  document.getElementById('urg-tranquilo').className = 'ubtn' + (u === 'tranquilo' ? ' selected-tranquilo' : '');
+}
+
+function setOrfebre(o) {
+  orfebreSeleccionado = o;
+  document.getElementById('orf-daniel').className = 'ubtn' + (o === 'DANIEL' ? ' selected-hoy' : '');
+  document.getElementById('orf-pachula').className = 'ubtn' + (o === 'PACHULA' ? ' selected-hoy' : '');
+  document.getElementById('orf-grabado').className = 'ubtn' + (o === 'GRABADO' ? ' selected-tranquilo' : '');
+  document.getElementById('orf-laureano').className = 'ubtn' + (o === 'LAUREANO' ? ' selected-semana' : '');
+  document.getElementById('orf-diseno').className = 'ubtn' + (o === 'DISEÑO' ? ' selected-diseno' : '');
+}
+
+async function confirmarTaller() {
+  const sobre = document.getElementById('t-sobre').textContent;
+  const cliente = document.getElementById('t-cliente').textContent;
+
+  if (!orfebreSeleccionado) { alert('Elegí a qué orfebre baja el sobre'); return; }
+
+  const res = await llamarConector('bajarTaller', {
+    sobre: sobre, orfebre: orfebreSeleccionado, paraElDia: document.getElementById('t-para-el-dia').value || ''
+  });
+  if (!res || !res.ok) { alert((res && res.error) || 'No se pudo guardar. Revisá el N° de sobre.'); return; }
+
+  document.getElementById('taller-datos').style.display = 'none';
+  document.getElementById('previewTaller').style.display = 'none';
+  document.getElementById('taller-conf').style.display = 'block';
+  document.getElementById('conf-texto-taller').innerHTML = 
+    `Sobre <strong>N° ${sobre}</strong> — <strong>${cliente}</strong><br>Bajó con <strong>${orfebreSeleccionado}</strong>`;
+}
+
+function reiniciarTaller() {
+  document.getElementById('fileInTaller').value = '';
+  document.getElementById('previewTaller').style.display = 'none';
+  document.getElementById('taller-datos').style.display = 'none';
+  document.getElementById('taller-conf').style.display = 'none';
+  document.getElementById('btnLeerTaller').disabled = true;
+  imgB64Taller = null;
+  urgenciaSeleccionada = null;
+  orfebreSeleccionado = null;
+  setOrfebre(null);
+  document.getElementById('t-notas').value = '';
+  document.getElementById('buscar-bajar-input').value = '';
+  document.getElementById('buscar-bajar-resultado').innerHTML = '';
+  cargarColaTaller();
+}
+
+// ===== COLA DE TRABAJOS (lista real desde la planilla) =====
+let colaCompleta = [];
+
+async function cargarColaTaller() {
+  const cont = document.getElementById('taller-cola-lista');
+  cont.innerHTML = '<div style="text-align:center; color:var(--gris); padding:20px;">Cargando...</div>';
+  const res = await llamarConector('colaTaller', {}, 'GET');
+  if (!res || !res.cola) { cont.innerHTML = '<div style="text-align:center; color:var(--gris);">No se pudo cargar.</div>'; return; }
+  colaCompleta = res.cola;
+  window._seleccionCola = {};
+  orfebreFiltroActual = 'TODOS';
+  ['TODOS','DANIEL','PACHULA','GRABADO','LAUREANO','DISEÑO'].forEach(o => {
+    const b = document.getElementById('filtro-orf-' + o);
+    if (b) b.classList.toggle('selected-hoy', o === 'TODOS');
+  });
+  document.getElementById('buscar-cola-input').value = '';
+  renderCola(colaCompleta);
+}
+
+let orfebreFiltroActual = 'TODOS';
+
+function filtrarPorOrfebre(orfebre) {
+  orfebreFiltroActual = orfebre;
+  ['TODOS','DANIEL','PACHULA','GRABADO','LAUREANO','DISEÑO'].forEach(o => {
+    document.getElementById('filtro-orf-' + o).classList.toggle('selected-hoy', o === orfebre);
+  });
+  filtrarCola();
+}
+
+function filtrarCola() {
+  const raw = document.getElementById('buscar-cola-input').value.trim();
+  let filtrada = colaCompleta;
+  if (orfebreFiltroActual !== 'TODOS') {
+    filtrada = filtrada.filter(item => (item.orfebre || '').toUpperCase() === orfebreFiltroActual);
+  }
+  if (raw) {
+    const tokens = raw.split(/[,\s]+/).map(s => s.trim()).filter(s => s);
+    const sonVariosNumeros = tokens.length > 1 && tokens.every(t => /^\d+$/.test(t));
+    if (sonVariosNumeros) {
+      // Varios N° de sobre juntos, ej: "3045,3046,3047"
+      filtrada = filtrada.filter(item => tokens.includes(String(item.sobre)));
+    } else {
+      const q = raw.toLowerCase();
+      filtrada = filtrada.filter(item =>
+        String(item.sobre).toLowerCase().includes(q) ||
+        (item.cliente || '').toLowerCase().includes(q)
+      );
+    }
+  }
+  renderCola(filtrada);
+}
+
+function renderCola(listaOriginal) {
+  const cont = document.getElementById('taller-cola-lista');
+
+  if (listaOriginal.length === 0) {
+    cont.innerHTML = '<div style="text-align:center; color:var(--gris); padding:20px;">No se encontró ningún sobre.</div>';
+    return;
+  }
+
+  // Ordena: atrasados primero (el más viejo arriba de todo), después los que no tienen atraso
+  const lista = [...listaOriginal].sort((a, b) => {
+    if (!!a.atrasado !== !!b.atrasado) return a.atrasado ? -1 : 1;
+    const fa = a.paraElDia ? new Date(a.paraElDia).getTime() : Infinity;
+    const fb = b.paraElDia ? new Date(b.paraElDia).getTime() : Infinity;
+    return fa - fb;
+  });
+
+  window._colaLista = lista;
+  window._seleccionCola = window._seleccionCola || {};
+
+  const chips = lista.map(item => {
+    const esRetorno = String(item.retorno).toUpperCase().indexOf('SÍ') !== -1 || String(item.retorno).toUpperCase() === 'SI';
+    const esGrabado = String(item.orfebre || '').toUpperCase() === 'GRABADO';
+    const esLaureano = String(item.orfebre || '').toUpperCase() === 'LAUREANO';
+    const esDiseno = String(item.orfebre || '').toUpperCase() === 'DISEÑO';
+    return `
+    <button class="chip-sobre ${item.atrasado ? 'chip-atrasado' : ''} ${window._seleccionCola[item.sobre] ? 'chip-selected' : ''}"
+      onclick="toggleChipSobre('${item.sobre}')">
+      #${item.sobre}${item.atrasado ? ' ⚠<span style="font-size:7px;"> ATRASADO</span>' : ''}${esGrabado ? ' ✏<span style="font-size:7px;"> GRABADO</span>' : ''}${esLaureano ? ' 🧪<span style="font-size:7px;"> LAUREANO</span>' : ''}${esDiseno ? ' 🎨<span style="font-size:7px;"> DISEÑO</span>' : ''}${esRetorno ? ' 🔁<span style="font-size:7px;"> RETORNO</span>' : ''}${item.cliente ? '<br><span style="font-size:13px; font-weight:400;">' + item.cliente + '</span>' : ''}
+    </button>
+  `;
+  }).join('');
+
+  const seleccionados = lista.filter(i => window._seleccionCola[i.sobre]);
+  const barraSel = seleccionados.length > 0 ? `
+    <div class="alerta alerta-azul" style="margin:10px 0; padding:8px 10px; font-size:12px; display:flex; justify-content:space-between; align-items:center;">
+      <span>${seleccionados.length} seleccionados</span>
+      <button class="btn btn-oro" style="width:auto; padding:8px 12px; font-size:12px;" onclick="abrirControlLote()">${seleccionados.length === 1 ? 'Controlar' : 'Controlar juntos'}</button>
+    </div>` : '<div style="font-size:11px; color:var(--gris); margin:6px 0;">Tocá uno o varios números para elegir</div>';
+
+  cont.innerHTML = `<div class="chips-grid">${chips}</div>${barraSel}<div id="detalle-sobre-cont"></div>`;
+}
+
+function toggleChipSobre(sobre) {
+  window._seleccionCola = window._seleccionCola || {};
+  window._seleccionCola[sobre] = !window._seleccionCola[sobre];
+  renderCola(window._colaLista);
+}
+
+// ===== ÍTEMS POR SOBRE (para sobres con varios trabajos y precios, ej: CPU) =====
+function toggleItemsSobre(sobre) {
+  window._itemsPorSobre = window._itemsPorSobre || {};
+  const cont = document.getElementById('items-cont-' + sobre);
+  const precioInput = document.querySelector(`.lote-precio-item[data-sobre="${sobre}"]`);
+  const activo = cont.style.display !== 'none';
+  if (activo) {
+    cont.style.display = 'none';
+    cont.innerHTML = '';
+    delete window._itemsPorSobre[sobre];
+    if (precioInput) precioInput.disabled = false;
+  } else {
+    cont.style.display = 'block';
+    if (!window._itemsPorSobre[sobre] || window._itemsPorSobre[sobre].length === 0) {
+      window._itemsPorSobre[sobre] = [{ descripcion: '', precio: '' }, { descripcion: '', precio: '' }];
+    }
+    if (precioInput) { precioInput.value = ''; precioInput.disabled = true; }
+    renderItemsSobre(sobre);
+  }
+}
+
+function renderItemsSobre(sobre) {
+  const cont = document.getElementById('items-cont-' + sobre);
+  const items = window._itemsPorSobre[sobre] || [];
+  const filas = items.map((it, idx) => `
+    <div style="display:flex; gap:6px; margin-bottom:4px;">
+      <input type="text" class="dato-input-big" placeholder="Descripción" value="${it.descripcion || ''}" style="flex:2; font-size:13px; padding:8px;" oninput="actualizarItemSobre('${sobre}', ${idx}, 'descripcion', this.value)">
+      <input type="number" class="dato-input-big" placeholder="Precio" value="${it.precio || ''}" style="flex:1; font-size:13px; padding:8px;" oninput="actualizarItemSobre('${sobre}', ${idx}, 'precio', this.value)">
+      <button type="button" class="btn btn-outline btn-sm" onclick="quitarItemSobre('${sobre}', ${idx})">✕</button>
+    </div>
+  `).join('');
+  const total = items.reduce((acc, it) => acc + (Number(it.precio) || 0), 0);
+  cont.innerHTML = filas + `
+    <button type="button" class="btn btn-outline btn-sm" style="margin-top:4px;" onclick="agregarItemSobre('${sobre}')">+ Agregar ítem</button>
+    <div id="total-items-${sobre}" style="text-align:right; font-size:13px; font-weight:700; margin-top:4px;">Total: $${total.toLocaleString('es-AR')}</div>
+  `;
+}
+
+function actualizarItemSobre(sobre, idx, campo, valor) {
+  window._itemsPorSobre[sobre][idx][campo] = valor;
+  const total = window._itemsPorSobre[sobre].reduce((acc, it) => acc + (Number(it.precio) || 0), 0);
+  const totalEl = document.getElementById('total-items-' + sobre);
+  if (totalEl) totalEl.textContent = 'Total: $' + total.toLocaleString('es-AR');
+}
+
+function agregarItemSobre(sobre) {
+  window._itemsPorSobre[sobre].push({ descripcion: '', precio: '' });
+  renderItemsSobre(sobre);
+}
+
+function quitarItemSobre(sobre, idx) {
+  window._itemsPorSobre[sobre].splice(idx, 1);
+  renderItemsSobre(sobre);
+}
+
+function abrirControlLote(mantenerSeleccion) {
+  const seleccionados = (window._colaLista || []).filter(i => window._seleccionCola[i.sobre]);
+  const esUnoSolo = seleccionados.length === 1;
+  if (!mantenerSeleccion) window._retornoPorSobre = {};
+
+  document.getElementById('detalle-sobre-cont').innerHTML = `
+    <div class="cola-item normal" style="margin-top:10px; display:block">
+      <div class="cola-cliente" style="margin-bottom:8px">Controlando ${seleccionados.length} sobre${seleccionados.length>1?'s juntos':''}</div>
+
+      <div class="dato-label" style="margin-bottom:6px">¿Quién controla?</div>
+      <div class="urgencia-btns">
+        <button class="ubtn" onclick="seleccionarControlador('lote','SOFI')" id="lote-b-SOFI">SOFI</button>
+        <button class="ubtn" onclick="seleccionarControlador('lote','ROMI')" id="lote-b-ROMI">ROMI</button>
+        <button class="ubtn" onclick="seleccionarControlador('lote','DAMI')" id="lote-b-DAMI">DAMI</button>
+        <button class="ubtn" onclick="seleccionarControlador('lote','CELE')" id="lote-b-CELE">CELE</button>
+        <button class="ubtn" onclick="seleccionarControlador('lote','LAUREANO')" id="lote-b-LAUREANO">LAUREANO</button>
+        <button class="ubtn" onclick="seleccionarControlador('lote','MAURICIO')" id="lote-b-MAURICIO">MAURICIO</button>
+      </div>
+
+      ${esUnoSolo ? (seleccionados[0].tienePrecio ? '' : `
+      <div class="dato-label" style="margin:10px 0 6px">💲 Precio (opcional — si recién ahora lo sabés)</div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <input type="number" class="dato-input-big lote-precio-item" data-sobre="${seleccionados[0].sobre}" placeholder="Dejar vacío si ya tenía precio" style="font-size:20px; padding:14px; height:auto; flex:1;">
+        <button type="button" class="btn btn-outline btn-sm" onclick="toggleItemsSobre('${seleccionados[0].sobre}')">🧾 Ítems</button>
+      </div>
+      <div id="items-cont-${seleccionados[0].sobre}" style="display:none; margin-top:8px;"></div>
+      <select class="dato-select" id="lote-medio-pago" style="margin-top:8px">
+        <option value="">— Medio de pago —</option>
+        <option>CUENTA CORRIENTE</option>
+        <option>EFECTIVO</option>
+        <option>TARJETA FISER</option>
+        <option>TRANSFERENCIA SANTANDER</option>
+        <option>MERCADO PAGO FISER</option>
+        <option>MERCADO PAGO LAUREANO</option>
+        <option>UALA CARLA</option>
+      </select>
+      `) : (() => {
+        const sinPrecio = seleccionados.filter(item => !item.tienePrecio);
+        if (sinPrecio.length === 0) return '';
+        return `
+      <div class="dato-label" style="margin:10px 0 6px">💲 Precio de cada sobre (opcional — completá solo los que no tenían precio, ej: Zipiur)</div>
+      ${sinPrecio.map(item => `
+        <div style="margin-bottom:8px; border:1px solid var(--gris-claro); border-radius:8px; padding:8px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="width:70px;">
+              <span style="font-size:13px; font-weight:600; display:block;">#${item.sobre}</span>
+              <span style="font-size:11px; color:var(--gris); display:block;">${item.cliente || ''}</span>
+            </span>
+            <input type="number" class="dato-input-big lote-precio-item" data-sobre="${item.sobre}" placeholder="Dejar vacío si ya tenía precio" style="font-size:16px; padding:10px; height:auto; flex:1;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="toggleItemsSobre('${item.sobre}')">🧾 Ítems</button>
+          </div>
+          <div id="items-cont-${item.sobre}" style="display:none; margin-top:8px;"></div>
+        </div>
+      `).join('')}
+      <select class="dato-select" id="lote-medio-pago" style="margin-top:8px">
+        <option value="">— Medio de pago (para los que carguen precio) —</option>
+        <option>CUENTA CORRIENTE</option>
+        <option>EFECTIVO</option>
+        <option>TARJETA FISER</option>
+        <option>TRANSFERENCIA SANTANDER</option>
+        <option>MERCADO PAGO FISER</option>
+        <option>MERCADO PAGO LAUREANO</option>
+        <option>UALA CARLA</option>
+      </select>
+      `;
+      })()}
+
+      ${esUnoSolo ? `
+      <div class="dato-label" style="margin:10px 0 6px">¿Cómo queda este sobre?</div>
+      <div class="urgencia-btns">
+        <button class="btn btn-verde" style="flex:1" onclick="confirmarControlLote('listo')">✅ SÍ, listo</button>
+        <button class="btn btn-outline" style="flex:1" onclick="confirmarControlLote('retorno')">🔁 Retorna</button>
+      </div>
+      <button class="btn btn-outline" style="width:100%; margin-top:8px" onclick="confirmarControlLote('DANIEL')">↗ Pasa a DANIEL</button>
+      <button class="btn btn-outline" style="width:100%; margin-top:6px" onclick="confirmarControlLote('PACHULA')">↗ Pasa a PACHULA</button>
+      <button class="btn btn-outline" style="width:100%; margin-top:6px" onclick="confirmarControlLote('DISEÑO')">🎨 Pasa a DISEÑO</button>
+      <button class="btn btn-outline" style="width:100%; margin-top:6px" onclick="confirmarControlLote('GRABADO')">✏ Pasa a GRABADO</button>
+      <button class="btn btn-outline" style="width:100%; margin-top:6px" onclick="confirmarControlLote('LAUREANO')">🧪 Pasa a LAUREANO</button>
+      ` : `
+      <div class="dato-label" style="margin:10px 0 6px">¿Cuáles quedaron bien, y a dónde pasan los que no?</div>
+      ${seleccionados.map(item => {
+        if (window._retornoPorSobre[item.sobre] === undefined) window._retornoPorSobre[item.sobre] = 'listo';
+        const estado = window._retornoPorSobre[item.sobre];
+        return `
+        <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+          <span style="width:60px; font-size:12px; font-weight:600;">#${item.sobre}</span>
+          <button class="btn ${estado === 'listo' ? 'btn-verde' : 'btn-outline'}" style="flex:1; padding:8px 4px; font-size:11px;" onclick="marcarEstadoSobreLote('${item.sobre}', 'listo')">✅ Bien</button>
+          <button class="btn ${estado === 'retorno' ? 'btn-rojo' : 'btn-outline'}" style="flex:1; padding:8px 4px; font-size:11px;" onclick="marcarEstadoSobreLote('${item.sobre}', 'retorno')">🔁 Mismo</button>
+          <select class="dato-select" style="flex:1; padding:6px 2px; font-size:11px;" onchange="marcarEstadoSobreLote('${item.sobre}', this.value)">
+            <option value="listo" ${!['DANIEL','PACHULA','DISEÑO','GRABADO','LAUREANO'].includes(estado) ? '' : ''}>↗ Pasa a...</option>
+            <option value="DANIEL" ${estado === 'DANIEL' ? 'selected' : ''}>Daniel</option>
+            <option value="PACHULA" ${estado === 'PACHULA' ? 'selected' : ''}>Pachula</option>
+            <option value="DISEÑO" ${estado === 'DISEÑO' ? 'selected' : ''}>🎨 Diseño</option>
+            <option value="GRABADO" ${estado === 'GRABADO' ? 'selected' : ''}>✏ Grabado</option>
+            <option value="LAUREANO" ${estado === 'LAUREANO' ? 'selected' : ''}>🧪 Laureano</option>
+          </select>
+        </div>`;
+      }).join('')}
+      <button class="btn btn-oro" style="margin-top:10px" onclick="confirmarControlLote()">Confirmar</button>
+      `}
+    </div>`;
+}
+
+function marcarEstadoSobreLote(sobre, estado) {
+  window._retornoPorSobre[sobre] = estado;
+  abrirControlLote(true);
+}
+
+async function confirmarControlLote(estadoUnico) {
+  const controlador = window['controlador_lote'];
+  if (!controlador) { alert('Primero elegí quién controla.'); return; }
+  const seleccionadosItems = (window._colaLista || []).filter(i => window._seleccionCola[i.sobre]);
+  const seleccionados = seleccionadosItems.map(i => i.sobre);
+  const esUnoSolo = seleccionados.length === 1;
+
+  // Si es uno solo, el estado viene directo del botón. Si son varios, se arma un mapa por sobre.
+  // estadoUnico puede ser: 'listo' | 'retorno' | 'DANIEL' | 'PACHULA' | 'DISEÑO' | 'GRABADO' | 'LAUREANO'
+  const estados = {};
+  if (esUnoSolo) {
+    estados[seleccionados[0]] = estadoUnico;
+  } else {
+    seleccionados.forEach(s => { estados[s] = window._retornoPorSobre[s] || 'listo'; });
+  }
+
+  const ORFEBRES_VALIDOS = ['DANIEL', 'PACHULA', 'DISEÑO', 'GRABADO', 'LAUREANO'];
+  const retornos = {};
+  const nuevosOrfebres = {};
+  seleccionados.forEach(s => {
+    const estado = estados[s];
+    retornos[s] = estado !== 'listo';
+    if (ORFEBRES_VALIDOS.includes(estado)) nuevosOrfebres[s] = estado;
+  });
+
+  const precioInput = document.getElementById('lote-precio');
+  const medioInput = document.getElementById('lote-medio-pago');
+
+  // Precio individual por sobre (cuando se controlan varios juntos sin precio inicial, ej: Zipiur)
+  const precios = {};
+  document.querySelectorAll('.lote-precio-item').forEach(inp => {
+    if (inp.value) precios[inp.dataset.sobre] = inp.value;
+  });
+
+  // Ítems cargados por sobre (para sobres con varios trabajos, ej: CPU)
+  const itemsPorSobre = {};
+  Object.keys(window._itemsPorSobre || {}).forEach(sobre => {
+    const items = (window._itemsPorSobre[sobre] || []).filter(it => it.descripcion || it.precio);
+    if (items.length > 0) itemsPorSobre[sobre] = items;
+  });
+
+  const res = await llamarConector('marcarListoLote', {
+    sobres: seleccionados, controladoPor: controlador,
+    retornos: retornos,
+    nuevosOrfebres: nuevosOrfebres,
+    precio: precioInput ? precioInput.value : '',
+    precios: precios,
+    itemsPorSobre: itemsPorSobre,
+    medioPago: medioInput ? medioInput.value : ''
+  });
+  if (!res || !res.ok) { alert('No se pudo guardar.'); return; }
+  window._seleccionCola = {};
+  window._retornoPorSobre = {};
+  window._itemsPorSobre = {};
+
+  const quedaronBien = seleccionadosItems.filter(item => estados[item.sobre] === 'listo');
+  const volvieron = seleccionadosItems.filter(item => estados[item.sobre] !== 'listo');
+  const ORFEBRES_VALIDOS_MSG = ['DANIEL', 'PACHULA', 'DISEÑO', 'GRABADO', 'LAUREANO'];
+  const reasignados = seleccionadosItems.filter(item => ORFEBRES_VALIDOS_MSG.includes(estados[item.sobre]));
+
+  if (quedaronBien.length === 0) {
+    const txtGrabado = reasignados.length > 0 ? ` (${reasignados.length} reasignados)` : '';
+    alert(`${volvieron.length} sobre${volvieron.length>1?'s':''} no quedaron listos${txtGrabado}.`);
+    cargarColaTaller();
+    return;
+  }
+
+  // Agrupa por teléfono (mismo cliente) para mandar un solo mensaje con todos sus sobres — solo los que quedaron bien
+  const grupos = {};
+  quedaronBien.forEach(item => {
+    const clave = item.telefono ? String(item.telefono).replace(/\D/g, '') : ('sin-tel-' + item.cliente);
+    if (!grupos[clave]) grupos[clave] = { telefono: item.telefono, cliente: item.cliente, sobres: [] };
+    grupos[clave].sobres.push(item.sobre);
+  });
+
+  const botones = Object.values(grupos).map(g => {
+    const bloques = g.sobres.map(s => {
+      const items = itemsPorSobre[s] || itemsPorSobre[String(s)];
+      if (items && items.length > 0) {
+        const lineas = items.map(it => `   🔹 ${it.descripcion || ''} — $${(Number(it.precio)||0).toLocaleString('es-AR')}`).join('\n');
+        return `📦 *Sobre #${s}*\n${lineas}`;
+      }
+      const infoSobre = quedaronBien.find(i => String(i.sobre) === String(s));
+      return `📦 *Sobre #${s}*\n   🔹 ${(infoSobre && infoSobre.descripcion) || ''}`;
+    }).join('\n\n');
+    const mensaje = g.sobres.length > 1
+      ? `Hola ${g.cliente}! 👋 Ya están listos tus trabajos en Joyería Tándem ✨\n\n${bloques}\n\nTe esperamos en Vélez Sarsfield 156, Córdoba 💍`
+      : `Hola ${g.cliente}! 👋 Ya está listo tu trabajo en Joyería Tándem ✨\n\n${bloques}\n\nTe esperamos en Vélez Sarsfield 156, Córdoba 💍`;
+    const link = armarLinkWhatsapp(g.telefono, mensaje);
+    return link
+      ? `<a href="${link}" target="_blank" rel="noopener" class="btn btn-verde" style="display:block; width:100%; margin-top:8px; text-decoration:none; text-align:center; box-sizing:border-box;">📲 Avisar a ${g.cliente} (${g.sobres.map(s => '#' + s).join(', ')})</a>`
+      : `<div style="margin-top:8px; color:#999; font-size:13px;">${g.cliente} (${g.sobres.map(s => '#' + s).join(', ')}): sin teléfono cargado</div>`;
+  }).join('');
+
+  const avisoRetorno = volvieron.length > 0
+    ? `<div style="margin-top:8px; font-size:12px; color:var(--gris);">⚠️ ${volvieron.length} sobre${volvieron.length>1?'s':''} (${volvieron.map(v=>'#'+v.sobre).join(', ')}) volvió al taller, sin avisar al cliente.</div>`
+    : '';
+
+  document.getElementById('taller-cola-lista').innerHTML = `
+    <div class="cola-item normal" style="display:block">
+      <div class="cola-cliente">✅ ${quedaronBien.length} sobre${quedaronBien.length>1?'s':''} listo${quedaronBien.length>1?'s':''} para retirar</div>
+      ${botones}
+      ${avisoRetorno}
+      <button class="btn btn-outline" style="margin-top:10px" onclick="cargarColaTaller()">✔ Listo, volver a la lista</button>
+    </div>`;
+}
+
+function abrirDetalleSobre(sobre) {
+  const item = (window._colaLista || []).find(i => String(i.sobre) === String(sobre));
+  if (!item) return;
+  const idSafe = 'ctrl-' + String(item.sobre).replace(/\D/g, '');
+  const atrasadoTxt = item.atrasado ? '<span class="urgencia-badge urg-hoy">ATRASADO</span>' : '';
+  const esRetorno = String(item.retorno).toUpperCase().indexOf('SÍ') !== -1 || String(item.retorno).toUpperCase() === 'SI';
+  const retornoTxt = esRetorno ? '<span class="urgencia-badge urg-hoy">🔁 RETORNO</span>' : '';
+
+  document.getElementById('detalle-sobre-cont').innerHTML = `
+    <div class="cola-item ${item.atrasado ? 'urgente' : 'normal'}" style="margin-top:10px">
+      <div class="cola-num">#${item.sobre}</div>
+      <div class="cola-info">
+        <div class="cola-cliente">${item.cliente || 'Sin nombre'}</div>
+        <div class="cola-trabajo">${item.descripcion || ''}</div>
+        <div class="cola-notas">🛠 ${item.orfebre || '—'}${item.paraElDia ? ' · Para: ' + formatearFecha(item.paraElDia) : ''}</div>
+      </div>
+      ${atrasadoTxt}${retornoTxt}
+
+      <div style="width:100%; margin-top:10px; padding-top:10px; border-top:1px dashed #ccc;">
+        <div class="dato-label" style="margin-bottom:6px">¿Quién controla?</div>
+        <div class="urgencia-btns">
+          <button class="ubtn" onclick="seleccionarControlador('${idSafe}','SOFI')" id="${idSafe}-b-SOFI">SOFI</button>
+          <button class="ubtn" onclick="seleccionarControlador('${idSafe}','ROMI')" id="${idSafe}-b-ROMI">ROMI</button>
+          <button class="ubtn" onclick="seleccionarControlador('${idSafe}','DAMI')" id="${idSafe}-b-DAMI">DAMI</button>
+          <button class="ubtn" onclick="seleccionarControlador('${idSafe}','CELE')" id="${idSafe}-b-CELE">CELE</button>
+          <button class="ubtn" onclick="seleccionarControlador('${idSafe}','LAUREANO')" id="${idSafe}-b-LAUREANO">LAUREANO</button>
+          <button class="ubtn" onclick="seleccionarControlador('${idSafe}','MAURICIO')" id="${idSafe}-b-MAURICIO">MAURICIO</button>
+        </div>
+
+        <div class="dato-label" style="margin:10px 0 6px">¿Quedó bien hecho?</div>
+        <div class="urgencia-btns">
+          <button class="btn btn-verde" style="flex:1" onclick="confirmarControl('${idSafe}','${item.sobre}',true)">✅ SÍ, listo</button>
+          <button class="btn btn-outline" style="flex:1" onclick="confirmarControl('${idSafe}','${item.sobre}',false)">⚠️ NO, retorno</button>
+        </div>
+        <button class="btn btn-outline" style="width:100%; margin-top:8px" onclick="confirmarControl('${idSafe}','${item.sobre}','DANIEL')">↗ Pasa a DANIEL</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:6px" onclick="confirmarControl('${idSafe}','${item.sobre}','PACHULA')">↗ Pasa a PACHULA</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:6px" onclick="confirmarControl('${idSafe}','${item.sobre}','DISEÑO')">🎨 Pasa a DISEÑO</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:6px" onclick="confirmarControl('${idSafe}','${item.sobre}','GRABADO')">✏ Pasa a GRABADO</button>
+        <button class="btn btn-outline" style="width:100%; margin-top:6px" onclick="confirmarControl('${idSafe}','${item.sobre}','LAUREANO')">🧪 Pasa a LAUREANO</button>
+      </div>
+    </div>`;
+}
+
+function mostrarPanelControl(idSafe) {
+  const panel = document.getElementById(idSafe);
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+function seleccionarControlador(idSafe, nombre) {
+  window['controlador_' + idSafe] = nombre;
+  ['SOFI','ROMI','DAMI','CELE','LAUREANO','MAURICIO'].forEach(n => {
+    document.getElementById(`${idSafe}-b-${n}`).classList.toggle('selected-hoy', n === nombre);
+  });
+}
+
+async function confirmarControl(idSafe, sobre, estado) {
+  const controlador = window['controlador_' + idSafe];
+  if (!controlador) { alert('Primero elegí quién controla.'); return; }
+  const ORFEBRES_VALIDOS = ['DANIEL', 'PACHULA', 'DISEÑO', 'GRABADO', 'LAUREANO'];
+  const quedoBien = estado === true;
+  const seReasigna = ORFEBRES_VALIDOS.includes(estado);
+  const res = await llamarConector('marcarListo', {
+    sobre: sobre, controladoPor: controlador, retorno: !quedoBien,
+    nuevoOrfebre: seReasigna ? estado : null
+  });
+  if (!res || !res.ok) { alert('No se pudo guardar.'); return; }
+
+  if (seReasigna) {
+    alert(`↗ Pasó a ${estado}.`);
+    cargarColaTaller();
+    return;
+  }
+  if (!quedoBien) {
+    alert('⚠️ Marcado como retorno — vuelve a taller con el mismo orfebre.');
+    cargarColaTaller();
+    return;
+  }
+
+  const item = (window._colaLista || []).find(i => String(i.sobre) === String(sobre));
+  const itemsRes = await llamarConector('itemsSobre', { numero: sobre }, 'GET');
+  const items = (itemsRes && itemsRes.items && itemsRes.items.length > 0) ? itemsRes.items : null;
+  const detalle = items
+    ? items.map(it => `   🔹 ${it.descripcion || ''} — $${(Number(it.precio)||0).toLocaleString('es-AR')}`).join('\n')
+    : `   🔹 ${(item && item.descripcion) || ''}`;
+  const mensaje = `Hola ${(item && item.cliente) || ''}! 👋 Ya está listo tu trabajo, sobre *#${sobre}*, en Joyería Tándem ✨\n\n${detalle}\n\nTe esperamos en Vélez Sarsfield 156, Córdoba 💍`;
+  const link = armarLinkWhatsapp(item && item.telefono, mensaje);
+
+  document.getElementById('detalle-sobre-cont').innerHTML = `
+    <div class="cola-item normal" style="margin-top:10px; display:block">
+      <div class="cola-cliente">✅ Sobre #${sobre} — ${(item && item.cliente) || ''} listo para retirar</div>
+      ${link
+        ? `<a href="${link}" target="_blank" rel="noopener" class="btn btn-verde" style="display:block; width:100%; margin-top:10px; text-decoration:none; text-align:center; box-sizing:border-box;">📲 Avisar por WhatsApp</a>`
+        : `<div style="margin-top:8px; color:#999; font-size:13px;">No hay teléfono cargado para avisar por WhatsApp</div>`}
+      <button class="btn btn-outline" style="margin-top:10px" onclick="cargarColaTaller()">✔ Listo, volver a la lista</button>
+    </div>`;
+}
+</script>
+</body>
+</html>
