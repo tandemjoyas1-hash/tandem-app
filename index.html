@@ -35,6 +35,41 @@
   --sombra: 0 4px 24px rgba(0,0,0,0.10);
 }
 
+/* ===== Indicador global de "cargando" (para saber que la página está trabajando y no tildada) ===== */
+#overlayCargando {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+#overlayCargando .cajaCargando {
+  background: var(--negro);
+  color: var(--blanco);
+  padding: 14px 22px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: var(--sombra);
+  pointer-events: none;
+}
+#overlayCargando .spinnerCargando {
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(255,255,255,0.3);
+  border-top-color: var(--oro);
+  border-radius: 50%;
+  animation: girarSpinner 0.7s linear infinite;
+}
+@keyframes girarSpinner {
+  to { transform: rotate(360deg); }
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: var(--blanco);
@@ -545,6 +580,7 @@ input[type="file"] { display: none; }
 </style>
 </head>
 <body>
+<div id="overlayCargando"><div class="cajaCargando"><div class="spinnerCargando"></div><span id="textoCargando">Buscando...</span></div></div>
 
 <header>
   <div class="header-top">
@@ -1109,7 +1145,70 @@ function armarLinkWhatsapp(telefono, mensaje) {
     : `https://web.whatsapp.com/send?phone=${limpio}&text=${encodeURIComponent(mensaje)}`;
 }
 
-async function llamarConector(accion, datos, metodo, intento) {
+// ===== Indicador global de "cargando" + bloqueo de llamadas duplicadas =====
+// Cada acción del backend pasa por acá, así que alcanza con tocar este único lugar
+// para que TODA la app (Entrada, Taller, Retiro, etc.) muestre el cartelito de
+// "cargando" mientras espera, y para que un doble clic no dispare la misma
+// carga dos veces (si ya hay una llamada IGUAL en curso, se reutiliza esa
+// misma respuesta en vez de mandar una nueva).
+let llamadasActivas = 0;
+const llamadasEnCurso = {};
+
+const TEXTOS_CARGANDO = {
+  buscarSobre: 'Buscando sobre...',
+  buscarPorCliente: 'Buscando cliente...',
+  buscarBoleta: 'Buscando boleta...',
+  nuevaEntrada: 'Guardando entrada...',
+  nuevaEntradaLote: 'Guardando entradas...',
+  bajarTaller: 'Bajando a taller...',
+  bajarTallerLote: 'Bajando a taller...',
+  marcarListo: 'Guardando...',
+  marcarListoLote: 'Guardando...',
+  confirmarRetiro: 'Confirmando retiro...',
+  confirmarRetiroLote: 'Confirmando retiro...',
+  marcarBoletaRetirada: 'Confirmando retiro...',
+  generarBoleta: 'Generando boleta...',
+  leerSobreIA: 'Leyendo sobre con IA...',
+  leerLoteIA: 'Leyendo sobres con IA...',
+  colaTaller: 'Cargando cola de taller...',
+  todosActivos: 'Cargando sobres activos...',
+  historialSobre: 'Cargando historial...',
+  itemsSobre: 'Cargando ítems...'
+};
+
+function mostrarCargando(accion) {
+  llamadasActivas++;
+  const overlay = document.getElementById('overlayCargando');
+  const texto = document.getElementById('textoCargando');
+  if (texto) texto.textContent = TEXTOS_CARGANDO[accion] || 'Cargando...';
+  if (overlay) overlay.style.display = 'flex';
+}
+function ocultarCargando() {
+  llamadasActivas = Math.max(0, llamadasActivas - 1);
+  if (llamadasActivas === 0) {
+    const overlay = document.getElementById('overlayCargando');
+    if (overlay) overlay.style.display = 'none';
+  }
+}
+
+async function llamarConector(accion, datos, metodo) {
+  const clave = accion + '|' + JSON.stringify(datos || {});
+  // Si ya hay EXACTAMENTE la misma llamada en curso (típico de un doble clic
+  // o de apretar de nuevo porque "no se sabe si cargó"), se devuelve esa
+  // misma promesa en vez de mandar la carga de nuevo.
+  if (llamadasEnCurso[clave]) return llamadasEnCurso[clave];
+
+  mostrarCargando(accion);
+  const promesa = llamarConectorInterno(accion, datos, metodo, 1)
+    .finally(() => {
+      ocultarCargando();
+      delete llamadasEnCurso[clave];
+    });
+  llamadasEnCurso[clave] = promesa;
+  return promesa;
+}
+
+async function llamarConectorInterno(accion, datos, metodo, intento) {
   metodo = metodo || 'POST';
   intento = intento || 1;
   try {
@@ -1130,7 +1229,7 @@ async function llamarConector(accion, datos, metodo, intento) {
       // Google devolvió una página en vez de datos (suele pasar si se llama muy rápido seguido)
       if (intento < 3) {
         await new Promise(r => setTimeout(r, 800));
-        return llamarConector(accion, datos, metodo, intento + 1);
+        return llamarConectorInterno(accion, datos, metodo, intento + 1);
       }
       alert('Google tardó en responder. Esperá unos segundos y probá de nuevo.');
       return null;
@@ -1138,7 +1237,7 @@ async function llamarConector(accion, datos, metodo, intento) {
   } catch (err) {
     if (intento < 3) {
       await new Promise(r => setTimeout(r, 800));
-      return llamarConector(accion, datos, metodo, intento + 1);
+      return llamarConectorInterno(accion, datos, metodo, intento + 1);
     }
     alert('No se pudo conectar con la planilla. Revisá tu conexión a internet.\n' + err.message);
     return null;
