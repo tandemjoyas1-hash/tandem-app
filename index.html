@@ -1429,7 +1429,7 @@ async function buscarSobresClienteReal(q) {
         await new Promise(r => setTimeout(r, 500));
         datos = await llamarConector('buscarSobre', { numero: n }, 'GET');
       }
-      if (datos && datos.encontrado && String(datos.estado).indexOf('RETIRADO') === -1) {
+      if (datos && datos.encontrado && String(datos.estado).indexOf('✅') === -1) {
         sobres.push(datos);
       }
       await new Promise(r => setTimeout(r, 300));
@@ -1926,7 +1926,7 @@ async function buscarSobreReal(q) {
   const estadoEl = document.getElementById('ret-estado');
   const infoRetirado = document.getElementById('ret-info-retirado');
   const cobroSection = document.getElementById('ret-cobro-section');
-  const yaRetirado = String(datos.estado || '').toUpperCase().indexOf('RETIRADO') !== -1;
+  const yaRetirado = String(datos.estado || '').toUpperCase().indexOf('✅') !== -1;
 
   if (yaRetirado) {
     const fechaTxt = datos.fechaRetiro ? new Date(datos.fechaRetiro).toLocaleDateString('es-AR') : 'fecha no registrada';
@@ -2075,7 +2075,7 @@ async function buscarSobreParaBajarReal(qOriginal) {
     cont.innerHTML = '<div class="alerta alerta-azul" style="margin-top:10px">⚠️ Este sobre ya está en el taller.</div>';
     return;
   }
-  if (String(datos.estado).indexOf('RETIRADO') !== -1) {
+  if (String(datos.estado).indexOf('✅') !== -1) {
     cont.innerHTML = '<div class="alerta alerta-azul" style="margin-top:10px">⚠️ Este sobre ya fue retirado por el cliente.</div>';
     return;
   }
@@ -2096,7 +2096,7 @@ async function buscarPorNombreParaBajar(nombre) {
   const cont = document.getElementById('buscar-bajar-resultado');
   cont.innerHTML = '<div style="text-align:center; color:var(--gris); padding:10px;">Buscando...</div>';
   const res = await llamarConector('buscarPorCliente', { nombre: nombre }, 'GET');
-  const sobres = (res && res.sobres || []).filter(s => String(s.estado).indexOf('EN TALLER') === -1 && String(s.estado).indexOf('RETIRADO') === -1);
+  const sobres = (res && res.sobres || []).filter(s => String(s.estado).indexOf('EN TALLER') === -1 && String(s.estado).indexOf('✅') === -1);
 
   if (sobres.length === 0) {
     cont.innerHTML = '<div style="text-align:center; color:var(--gris); padding:10px;">No hay sobres pendientes para ese nombre.</div>';
@@ -2176,7 +2176,7 @@ async function buscarVariosParaBajar(numeros) {
       await new Promise(r => setTimeout(r, 600));
       datos = await llamarConector('buscarSobre', { numero: n }, 'GET');
     }
-    if (datos && datos.encontrado && String(datos.estado).indexOf('EN TALLER') === -1 && String(datos.estado).indexOf('RETIRADO') === -1) {
+    if (datos && datos.encontrado && String(datos.estado).indexOf('EN TALLER') === -1 && String(datos.estado).indexOf('✅') === -1) {
       encontrados.push(datos);
     }
     await new Promise(r => setTimeout(r, 400));
