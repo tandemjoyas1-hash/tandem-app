@@ -1008,17 +1008,6 @@ input[type="file"] { display: none; }
       </div>
       
       <div style="margin-top:12px; margin-bottom:8px">
-        <div class="dato-label" style="margin-bottom:8px">¿Quién está bajando esto?</div>
-        <div class="urgencia-btns">
-          <button class="ubtn" onclick="setQuienBaja('SOFI')" id="qb-SOFI">SOFI</button>
-          <button class="ubtn" onclick="setQuienBaja('ROMI')" id="qb-ROMI">ROMI</button>
-          <button class="ubtn" onclick="setQuienBaja('DAMI')" id="qb-DAMI">DAMI</button>
-          <button class="ubtn" onclick="setQuienBaja('CELE')" id="qb-CELE">CELE</button>
-          <button class="ubtn" onclick="setQuienBaja('LAUREANO')" id="qb-LAUREANO">LAUREANO</button>
-        </div>
-      </div>
-
-      <div style="margin-top:12px; margin-bottom:8px">
         <div class="dato-label" style="margin-bottom:8px">¿A qué orfebre baja?</div>
         <div class="urgencia-btns">
           <button class="ubtn" onclick="setOrfebre('DANIEL')" id="orf-daniel">DANIEL</button>
@@ -1107,14 +1096,6 @@ function setDestino(d) {
   document.getElementById('destino-GRABADO').classList.toggle('selected-grabado', d === 'GRABADO');
 }
 let orfebreSeleccionado = null;
-let quienBajaSeleccionado = null;
-
-function setQuienBaja(nombre) {
-  quienBajaSeleccionado = nombre;
-  ['SOFI','ROMI','DAMI','CELE','LAUREANO'].forEach(n => {
-    document.getElementById('qb-' + n).classList.toggle('selected-hoy', n === nombre);
-  });
-}
 let sobreEncontrado = null;
 let ventanaWhatsapp = null;
 
@@ -2320,11 +2301,10 @@ async function confirmarTaller() {
   const sobre = document.getElementById('t-sobre').textContent;
   const cliente = document.getElementById('t-cliente').textContent;
 
-  if (!quienBajaSeleccionado) { alert('Elegí quién está bajando el sobre'); return; }
   if (!orfebreSeleccionado) { alert('Elegí a qué orfebre baja el sobre'); return; }
 
   const res = await llamarConector('bajarTaller', {
-    sobre: sobre, orfebre: orfebreSeleccionado, quienBaja: quienBajaSeleccionado,
+    sobre: sobre, orfebre: orfebreSeleccionado, quienBaja: vendedora,
     paraElDia: document.getElementById('t-para-el-dia').value || ''
   });
   if (!res || !res.ok) { alert((res && res.error) || 'No se pudo guardar. Revisá el N° de sobre.'); return; }
@@ -2346,8 +2326,6 @@ function reiniciarTaller() {
   urgenciaSeleccionada = null;
   orfebreSeleccionado = null;
   setOrfebre(null);
-  quienBajaSeleccionado = null;
-  setQuienBaja(null);
   document.getElementById('t-notas').value = '';
   document.getElementById('buscar-bajar-input').value = '';
   document.getElementById('buscar-bajar-resultado').innerHTML = '';
