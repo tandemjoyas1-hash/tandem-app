@@ -35,41 +35,6 @@
   --sombra: 0 4px 24px rgba(0,0,0,0.10);
 }
 
-/* ===== Indicador global de "cargando" (para saber que la página está trabajando y no tildada) ===== */
-#overlayCargando {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-#overlayCargando .cajaCargando {
-  background: var(--negro);
-  color: var(--blanco);
-  padding: 14px 22px;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 15px;
-  font-weight: 600;
-  box-shadow: var(--sombra);
-  pointer-events: none;
-}
-#overlayCargando .spinnerCargando {
-  width: 18px;
-  height: 18px;
-  border: 3px solid rgba(255,255,255,0.3);
-  border-top-color: var(--oro);
-  border-radius: 50%;
-  animation: girarSpinner 0.7s linear infinite;
-}
-@keyframes girarSpinner {
-  to { transform: rotate(360deg); }
-}
-
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: var(--blanco);
@@ -580,7 +545,6 @@ input[type="file"] { display: none; }
 </style>
 </head>
 <body>
-<div id="overlayCargando"><div class="cajaCargando"><div class="spinnerCargando"></div><span id="textoCargando">Buscando...</span></div></div>
 
 <header>
   <div class="header-top">
@@ -1008,6 +972,17 @@ input[type="file"] { display: none; }
       </div>
       
       <div style="margin-top:12px; margin-bottom:8px">
+        <div class="dato-label" style="margin-bottom:8px">¿Quién está bajando esto?</div>
+        <div class="urgencia-btns">
+          <button class="ubtn" onclick="setQuienBaja('SOFI')" id="qb-SOFI">SOFI</button>
+          <button class="ubtn" onclick="setQuienBaja('ROMI')" id="qb-ROMI">ROMI</button>
+          <button class="ubtn" onclick="setQuienBaja('DAMI')" id="qb-DAMI">DAMI</button>
+          <button class="ubtn" onclick="setQuienBaja('CELE')" id="qb-CELE">CELE</button>
+          <button class="ubtn" onclick="setQuienBaja('LAUREANO')" id="qb-LAUREANO">LAUREANO</button>
+        </div>
+      </div>
+
+      <div style="margin-top:12px; margin-bottom:8px">
         <div class="dato-label" style="margin-bottom:8px">¿A qué orfebre baja?</div>
         <div class="urgencia-btns">
           <button class="ubtn" onclick="setOrfebre('DANIEL')" id="orf-daniel">DANIEL</button>
@@ -1096,6 +1071,14 @@ function setDestino(d) {
   document.getElementById('destino-GRABADO').classList.toggle('selected-grabado', d === 'GRABADO');
 }
 let orfebreSeleccionado = null;
+let quienBajaSeleccionado = null;
+
+function setQuienBaja(nombre) {
+  quienBajaSeleccionado = nombre;
+  ['SOFI','ROMI','DAMI','CELE','LAUREANO'].forEach(n => {
+    document.getElementById('qb-' + n).classList.toggle('selected-hoy', n === nombre);
+  });
+}
 let sobreEncontrado = null;
 let ventanaWhatsapp = null;
 
@@ -1126,70 +1109,7 @@ function armarLinkWhatsapp(telefono, mensaje) {
     : `https://web.whatsapp.com/send?phone=${limpio}&text=${encodeURIComponent(mensaje)}`;
 }
 
-// ===== Indicador global de "cargando" + bloqueo de llamadas duplicadas =====
-// Cada acción del backend pasa por acá, así que alcanza con tocar este único lugar
-// para que TODA la app (Entrada, Taller, Retiro, etc.) muestre el cartelito de
-// "cargando" mientras espera, y para que un doble clic no dispare la misma
-// carga dos veces (si ya hay una llamada IGUAL en curso, se reutiliza esa
-// misma respuesta en vez de mandar una nueva).
-let llamadasActivas = 0;
-const llamadasEnCurso = {};
-
-const TEXTOS_CARGANDO = {
-  buscarSobre: 'Buscando sobre...',
-  buscarPorCliente: 'Buscando cliente...',
-  buscarBoleta: 'Buscando boleta...',
-  nuevaEntrada: 'Guardando entrada...',
-  nuevaEntradaLote: 'Guardando entradas...',
-  bajarTaller: 'Bajando a taller...',
-  bajarTallerLote: 'Bajando a taller...',
-  marcarListo: 'Guardando...',
-  marcarListoLote: 'Guardando...',
-  confirmarRetiro: 'Confirmando retiro...',
-  confirmarRetiroLote: 'Confirmando retiro...',
-  marcarBoletaRetirada: 'Confirmando retiro...',
-  generarBoleta: 'Generando boleta...',
-  leerSobreIA: 'Leyendo sobre con IA...',
-  leerLoteIA: 'Leyendo sobres con IA...',
-  colaTaller: 'Cargando cola de taller...',
-  todosActivos: 'Cargando sobres activos...',
-  historialSobre: 'Cargando historial...',
-  itemsSobre: 'Cargando ítems...'
-};
-
-function mostrarCargando(accion) {
-  llamadasActivas++;
-  const overlay = document.getElementById('overlayCargando');
-  const texto = document.getElementById('textoCargando');
-  if (texto) texto.textContent = TEXTOS_CARGANDO[accion] || 'Cargando...';
-  if (overlay) overlay.style.display = 'flex';
-}
-function ocultarCargando() {
-  llamadasActivas = Math.max(0, llamadasActivas - 1);
-  if (llamadasActivas === 0) {
-    const overlay = document.getElementById('overlayCargando');
-    if (overlay) overlay.style.display = 'none';
-  }
-}
-
-async function llamarConector(accion, datos, metodo) {
-  const clave = accion + '|' + JSON.stringify(datos || {});
-  // Si ya hay EXACTAMENTE la misma llamada en curso (típico de un doble clic
-  // o de apretar de nuevo porque "no se sabe si cargó"), se devuelve esa
-  // misma promesa en vez de mandar la carga de nuevo.
-  if (llamadasEnCurso[clave]) return llamadasEnCurso[clave];
-
-  mostrarCargando(accion);
-  const promesa = llamarConectorInterno(accion, datos, metodo, 1)
-    .finally(() => {
-      ocultarCargando();
-      delete llamadasEnCurso[clave];
-    });
-  llamadasEnCurso[clave] = promesa;
-  return promesa;
-}
-
-async function llamarConectorInterno(accion, datos, metodo, intento) {
+async function llamarConector(accion, datos, metodo, intento) {
   metodo = metodo || 'POST';
   intento = intento || 1;
   try {
@@ -1210,7 +1130,7 @@ async function llamarConectorInterno(accion, datos, metodo, intento) {
       // Google devolvió una página en vez de datos (suele pasar si se llama muy rápido seguido)
       if (intento < 3) {
         await new Promise(r => setTimeout(r, 800));
-        return llamarConectorInterno(accion, datos, metodo, intento + 1);
+        return llamarConector(accion, datos, metodo, intento + 1);
       }
       alert('Google tardó en responder. Esperá unos segundos y probá de nuevo.');
       return null;
@@ -1218,7 +1138,7 @@ async function llamarConectorInterno(accion, datos, metodo, intento) {
   } catch (err) {
     if (intento < 3) {
       await new Promise(r => setTimeout(r, 800));
-      return llamarConectorInterno(accion, datos, metodo, intento + 1);
+      return llamarConector(accion, datos, metodo, intento + 1);
     }
     alert('No se pudo conectar con la planilla. Revisá tu conexión a internet.\n' + err.message);
     return null;
@@ -1410,7 +1330,7 @@ async function buscarSobresClienteReal(q) {
         await new Promise(r => setTimeout(r, 500));
         datos = await llamarConector('buscarSobre', { numero: n }, 'GET');
       }
-      if (datos && datos.encontrado && String(datos.estado).indexOf('✅') === -1) {
+      if (datos && datos.encontrado && String(datos.estado).indexOf('RETIRADO') === -1) {
         sobres.push(datos);
       }
       await new Promise(r => setTimeout(r, 300));
@@ -1851,7 +1771,9 @@ async function confirmarEntrada() {
     trabajo: document.getElementById('r-trabajo').value || '',
     paraElDia: document.getElementById('r-fecha-entrega').value || '',
     telefono: document.getElementById('r-telefono').value || '',
-    destino: destinoSeleccionado
+    destino: destinoSeleccionado,
+    tipoCliente: document.getElementById('r-tipo').value || '',
+    canal: document.getElementById('r-canal').value || ''
   });
 
   btn.disabled = false; btn.textContent = '✅ Confirmar entrada';
@@ -1907,7 +1829,7 @@ async function buscarSobreReal(q) {
   const estadoEl = document.getElementById('ret-estado');
   const infoRetirado = document.getElementById('ret-info-retirado');
   const cobroSection = document.getElementById('ret-cobro-section');
-  const yaRetirado = String(datos.estado || '').toUpperCase().indexOf('✅') !== -1;
+  const yaRetirado = String(datos.estado || '').toUpperCase().indexOf('RETIRADO') !== -1;
 
   if (yaRetirado) {
     const fechaTxt = datos.fechaRetiro ? new Date(datos.fechaRetiro).toLocaleDateString('es-AR') : 'fecha no registrada';
@@ -2056,7 +1978,7 @@ async function buscarSobreParaBajarReal(qOriginal) {
     cont.innerHTML = '<div class="alerta alerta-azul" style="margin-top:10px">⚠️ Este sobre ya está en el taller.</div>';
     return;
   }
-  if (String(datos.estado).indexOf('✅') !== -1) {
+  if (String(datos.estado).indexOf('RETIRADO') !== -1) {
     cont.innerHTML = '<div class="alerta alerta-azul" style="margin-top:10px">⚠️ Este sobre ya fue retirado por el cliente.</div>';
     return;
   }
@@ -2077,7 +1999,7 @@ async function buscarPorNombreParaBajar(nombre) {
   const cont = document.getElementById('buscar-bajar-resultado');
   cont.innerHTML = '<div style="text-align:center; color:var(--gris); padding:10px;">Buscando...</div>';
   const res = await llamarConector('buscarPorCliente', { nombre: nombre }, 'GET');
-  const sobres = (res && res.sobres || []).filter(s => String(s.estado).indexOf('EN TALLER') === -1 && String(s.estado).indexOf('✅') === -1);
+  const sobres = (res && res.sobres || []).filter(s => String(s.estado).indexOf('EN TALLER') === -1 && String(s.estado).indexOf('RETIRADO') === -1);
 
   if (sobres.length === 0) {
     cont.innerHTML = '<div style="text-align:center; color:var(--gris); padding:10px;">No hay sobres pendientes para ese nombre.</div>';
@@ -2157,7 +2079,7 @@ async function buscarVariosParaBajar(numeros) {
       await new Promise(r => setTimeout(r, 600));
       datos = await llamarConector('buscarSobre', { numero: n }, 'GET');
     }
-    if (datos && datos.encontrado && String(datos.estado).indexOf('EN TALLER') === -1 && String(datos.estado).indexOf('✅') === -1) {
+    if (datos && datos.encontrado && String(datos.estado).indexOf('EN TALLER') === -1 && String(datos.estado).indexOf('RETIRADO') === -1) {
       encontrados.push(datos);
     }
     await new Promise(r => setTimeout(r, 400));
@@ -2301,10 +2223,11 @@ async function confirmarTaller() {
   const sobre = document.getElementById('t-sobre').textContent;
   const cliente = document.getElementById('t-cliente').textContent;
 
+  if (!quienBajaSeleccionado) { alert('Elegí quién está bajando el sobre'); return; }
   if (!orfebreSeleccionado) { alert('Elegí a qué orfebre baja el sobre'); return; }
 
   const res = await llamarConector('bajarTaller', {
-    sobre: sobre, orfebre: orfebreSeleccionado, quienBaja: vendedora,
+    sobre: sobre, orfebre: orfebreSeleccionado, quienBaja: quienBajaSeleccionado,
     paraElDia: document.getElementById('t-para-el-dia').value || ''
   });
   if (!res || !res.ok) { alert((res && res.error) || 'No se pudo guardar. Revisá el N° de sobre.'); return; }
@@ -2326,6 +2249,8 @@ function reiniciarTaller() {
   urgenciaSeleccionada = null;
   orfebreSeleccionado = null;
   setOrfebre(null);
+  quienBajaSeleccionado = null;
+  setQuienBaja(null);
   document.getElementById('t-notas').value = '';
   document.getElementById('buscar-bajar-input').value = '';
   document.getElementById('buscar-bajar-resultado').innerHTML = '';
